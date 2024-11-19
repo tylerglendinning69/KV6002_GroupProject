@@ -20,6 +20,38 @@ h2 {
 
 }
 
+.controls {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.schedule {
+    display: grid;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.schedule div {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+.time-column {
+    background-color: #f1f1f1;
+    font-weight: bold;
+}
+
+.schedule-row {
+    display: contents;
+}
+
 .main-container {
     display: flex;
     justify-content: center;

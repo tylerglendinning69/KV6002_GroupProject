@@ -13,7 +13,79 @@
         <button name="ScheduleButton" type="button">Schedule</button>
         <button name="AvailabilityButton" type="button">Availability</button>  
         <h3>Schedule</h3>
-        <p>This is where the schedule will be</p>
+        <div class="controls">
+            <label for="start-hour">Start Hour:</label>
+            <input type="number" id="start-hour" min="0" max="23" value="8">
+            <label for="end-hour">End Hour:</label>
+            <input type="number" id="end-hour" min="1" max="24" value="18">
+            <button id="generate">Generate Schedule</button>
+        </div>
+        <div class="schedule" id="schedule"></div>
+    
+        <script>
+            const scheduleContainer = document.getElementById('schedule');
+            const startHourInput = document.getElementById('start-hour');
+            const endHourInput = document.getElementById('end-hour');
+            const generateButton = document.getElementById('generate');
+    
+            function generateSchedule() 
+            {
+                const startHour = parseInt(startHourInput.value, 10);
+                const endHour = parseInt(endHourInput.value, 10);
+
+                if (startHour >= endHour || startHour < 0 || endHour > 24) 
+                {
+                    alert("Invalid time range. Ensure start hour is earlier than end hour.");
+                    return;
+                }
+
+                // Clear existing schedule
+                scheduleContainer.innerHTML = '';
+
+                // Generate the headers
+                const days = ["TIME/DAY", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+                days.forEach(day => 
+                {
+                    const header = document.createElement('div');
+                    header.textContent = day;
+                    header.classList.add('header');
+                    scheduleContainer.appendChild(header);
+                });
+
+                // Generate rows for each hour
+                for (let hour = startHour; hour < endHour; hour++) 
+                {
+                    // Format the current hour and next hour
+                    const currentHour = hour === 24 ? '00:00' : `${String(hour).padStart(2, '0')}:00`;
+                    const nextHour = hour + 1 === 24 ? '00:00' : `${String((hour + 1) % 24).padStart(2, '0')}:00`;
+
+                    // Add the time column
+                    const timeColumn = document.createElement('div');
+                    timeColumn.textContent = `${currentHour}-${nextHour}`;
+                    timeColumn.classList.add('time-column');
+                    scheduleContainer.appendChild(timeColumn);
+
+                    // Add empty cells for the days
+                    for (let day = 0; day < 7; day++) 
+                    {
+                        const cell = document.createElement('div');
+                        cell.classList.add('schedule-cell');
+                        cell.textContent = ""; // Leave blank for user interaction later
+                        scheduleContainer.appendChild(cell);
+                    }
+                }
+
+                // Apply CSS grid to schedule
+                scheduleContainer.style.gridTemplateColumns = `repeat(${days.length}, 1fr)`;
+                scheduleContainer.style.gridAutoRows = `minmax(40px, auto)`;
+            }
+    
+            // Event listener for the "Generate Schedule" button
+            generateButton.addEventListener('click', generateSchedule);
+    
+            // Generate initial schedule
+            generateSchedule();
+        </script>
         <h3>Management Features</h3>
         <a href="MVolunteerManagement.html"><button name="VolunteerManagement" type="button">Volunteer Management</button></a>
         <a href="MRoleManagement.html"><button name="RoleManagement" type="button">Role Management</button></a>
