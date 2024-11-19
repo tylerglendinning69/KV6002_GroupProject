@@ -7,7 +7,41 @@
         <title>Role Management</title>
     </head>
     <body>
-        <p>This is where the Roles will be</p>
+        <div class="main-container">
+            <!-- Table Section -->
+            <div class="table-container">
+                <div class="container">
+                    <!-- Headers -->
+                    <div class="header">Role</div>
+                    <div class="header">CompletionTime</div>
+                </div>
+            </div>
+        </div>
+        <script>
+            // Example data
+            const data = [
+                { Role: "Cashier", CompletionTime: "8 hours" },
+                { Role: "Shelf Stacker", CompletionTime: "8 hours" },
+                { Role: "Customer care", CompletionTime: "4 hours" },
+                { Role: "Cleaning", CompletionTime: "2 hours" },
+            ];
+
+            // Container to append data
+            const container = document.querySelector('.container');
+
+            // Populate the grid dynamically
+            data.forEach(item => {
+                const roleDiv = document.createElement('div');
+                const timeDiv = document.createElement('div');
+
+                roleDiv.textContent = item.Role;
+                timeDiv.textContent = item.CompletionTime;
+
+                container.appendChild(roleDiv);
+                container.appendChild(timeDiv);
+            });
+        </script>
+
         <a href="MAddRole.html"><button name="AddRole" type="button">Add Role</button></a>
         <a href="MEditRole.html"><button name="EditRole" type="button">Edit Role</button></a>
         <a href="MRemoveRole.html"><button name="RemoveRole" type="button">Remove Role</button></a>
