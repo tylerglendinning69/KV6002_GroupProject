@@ -10,3 +10,12 @@ h1 {
 h2 {
     text-align: center;
 }
+
+.login{
+    justify-content: center;
+}
+
+.loginElements{
+    justify-self: center;
+
+}
