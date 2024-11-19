@@ -10,3 +10,59 @@ h1 {
 h2 {
     text-align: center;
 }
+
+.main-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.table-container {
+    flex: 4;
+    padding-right: 20px;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr; /* Four columns: Name, Time, Role, Email */
+    gap: 10px;
+    align-items: center;
+}
+
+.container div {
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.header {
+    font-weight: bold;
+    background-color: #ddd;
+}
+
+
+.button-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #888888;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #AAAAAA;
+}
+
+a {
+    text-decoration: none;
+}
