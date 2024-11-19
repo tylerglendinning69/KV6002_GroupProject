@@ -7,9 +7,60 @@
         <title>Volunteer Management</title>
     </head>
     <body>
-        <p>This is where the Volunteer Management will be</p>
-        <a href="MAddVolunteer.html"><button name="AddVolunteer" type="button">Add Volunteer</button></a>
-        <a href="MEditVolunteer.html"><button name="EditVolunteer" type="button">Edit Volunteer</button></a>
-        <a href="MRemoveVolunteer.html"><button name="RemoveVolunteer" type="button">Remove Volunteer</button></a>
+        <h1>Volunteer Management</h1>
+        <div class="main-container">
+            <!-- Table Section -->
+            <div class="table-container">
+                <div class="container">
+                    <!-- Headers -->
+                    <div class="header">Name</div>
+                    <div class="header">Time</div>
+                    <div class="header">Role</div>
+                    <div class="header">Email</div>
+                </div>
+            </div>
+            <!-- Button Section -->
+            <div class="button-container">
+                <a href="MAddVolunteer.html">
+                    <button name="AddVolunteer" type="button">Add Volunteer</button>
+                </a>
+                <a href="MEditVolunteer.html">
+                    <button name="EditVolunteer" type="button">Edit Volunteer</button>
+                </a>
+                <a href="MRemoveVolunteer.html">
+                    <button name="RemoveVolunteer" type="button">Remove Volunteer</button>
+                </a>
+            </div>
+        </div>
+        <script>
+            // Example data
+            const data = [
+                { name: "Tyler", time: "10:00 AM", role: "Cashier", email: "emailexample@gmail.com" },
+                { name: "Ellie", time: "11:30 AM", role: "Cashier", email: "emailexample@gmail.com" },
+                { name: "Kush", time: "1:00 PM", role: "Stock", email: "emailexample@gmail.com" },
+                { name: "Joe", time: "1:00 PM", role: "Stock", email: "emailexample@gmail.com" },
+            ];
+
+            // Container to append data
+            const container = document.querySelector('.container');
+
+            // Populate the grid dynamically
+            data.forEach(item => {
+                const nameDiv = document.createElement('div');
+                const timeDiv = document.createElement('div');
+                const roleDiv = document.createElement('div');
+                const emailDiv = document.createElement('div');
+
+                nameDiv.textContent = item.name;
+                timeDiv.textContent = item.time;
+                roleDiv.textContent = item.role;
+                emailDiv.textContent = item.email;
+
+                container.appendChild(nameDiv);
+                container.appendChild(timeDiv);
+                container.appendChild(roleDiv);
+                container.appendChild(emailDiv);
+            });
+        </script>
     </body>
 </html>
