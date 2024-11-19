@@ -11,3 +11,6 @@ https://code.visualstudio.com/
  3.5 You probably wont have Git installed and instead of the two buttons, there will be one about installing Git. Just install the most recent version and the version compatible for your device, and just select all the default options. If you have any issues message me or show me (tyler)
  4. NOW you should be able to clone repository! Click the “Clone Repository” button, then the search, and from there you’ll need to do a GitHub authentication check, come back to VS Code and hopefully the KV6002GroupProject should be there.
  5. I’ll talk in person about pushing and pulling and syncing branches and avoiding merge conflicts but for now you should have the repository set up
+
+## Link to Canva (contains the Hi-Fidelity Wireframes)
+https://www.canva.com/design/DAGU_H84sKk/5b7eOwK19dvRqiN9SlhQww/view?utm_content=DAGU_H84sKk&utm_campaign=designshare&utm_medium=link&utm_source=editor
