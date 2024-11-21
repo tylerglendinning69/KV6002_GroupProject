@@ -13,7 +13,15 @@ h2 {
 
 /*This is all the css for login page*/
 .login{
-    justify-content: center;
+    
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.login-body{
+    overflow: hidden;
 }
 
 .loginElements{
