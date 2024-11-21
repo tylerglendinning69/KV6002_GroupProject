@@ -7,6 +7,53 @@
     <title>MWorkHours</title>
 </head>
     <body>
-        <p>This is where the Management Work Hours Page will be</p>
+        <h1>Update Schedule</h1>
+        <form id="scheduleForm">
+            <label for="startHour">Start Hour:</label>
+            <input type="number" id="startHour" min="0" max="23" required>
+
+            <label for="endHour">End Hour:</label>
+            <input type="number" id="endHour" min="1" max="24" required>
+
+            <button type="submit">Save Changes</button>
+        </form>
+        <a href="ManagementHome.html"><button>Back to Schedule</button></a>
+
+        <script>
+            const scheduleForm = document.getElementById('scheduleForm');
+
+            // Load existing schedule data into the form
+            function loadFormData() 
+            {
+                const scheduleData = JSON.parse(localStorage.getItem('scheduleData')) || 
+                {
+                    startHour: 8,
+                    endHour: 18,
+                };
+                document.getElementById('startHour').value = scheduleData.startHour;
+                document.getElementById('endHour').value = scheduleData.endHour;
+            }
+
+            // Save the new schedule to localStorage
+            scheduleForm.addEventListener('submit', function (e) 
+            {
+                e.preventDefault(); // Prevent form submission
+                const startHour = parseInt(document.getElementById('startHour').value, 10);
+                const endHour = parseInt(document.getElementById('endHour').value, 10);
+
+                if (startHour >= endHour) 
+                {
+                    alert('Start Hour must be less than End Hour.');
+                    return;
+                }
+
+                // Save schedule to localStorage
+                localStorage.setItem('scheduleData', JSON.stringify({ startHour, endHour }));
+                alert('Schedule updated successfully!');
+            });
+
+            // Load form data on page load
+            loadFormData();
+        </script>
     </body>
 </html>
