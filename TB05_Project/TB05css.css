@@ -24,13 +24,28 @@ input {
 
 /*This is all the css for login page*/
 .login{
-    justify-content: center;
+    
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.login-body{
+    overflow: hidden;
 }
 
 .loginElements{
+    display: flex;
     justify-self: center;
-
 }
+
+.loginBtns{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    }
+/* ******************************************************* */
 
 .controls {
     margin-bottom: 20px;
@@ -64,16 +79,12 @@ label {
     display: contents;
 }
 
-.loginBtns{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    }
+
 
 .ManLogin{
     margin: 5px;
 }
-/* ******************************************************* */
+
 .main-container {
     display: flex;
     justify-content: center;
@@ -89,6 +100,13 @@ label {
 .container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr; /* Four columns: Name, Time, Role, Email */
+    gap: 10px;
+    align-items: center;
+}
+
+.role-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
     align-items: center;
 }
