@@ -29,6 +29,13 @@ h2 {
 
 }
 
+.loginBtns{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    }
+/* ******************************************************* */
+
 .controls {
     margin-bottom: 20px;
 }
@@ -61,16 +68,12 @@ label {
     display: contents;
 }
 
-.loginBtns{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    }
+
 
 .ManLogin{
     margin: 5px;
 }
-/* ******************************************************* */
+
 .main-container {
     display: flex;
     justify-content: center;

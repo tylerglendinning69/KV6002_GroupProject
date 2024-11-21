@@ -6,15 +6,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Manager Login</title>
     </head>
-    <body>
-        <h1>Manager Login</h1>
-        <form action="ManagementHome.html">
-            <label>Username</label>
-            <input type="text" name="username" required><br><br>
-            <label>Password</label>
-            <input type="password" name="password" required><br><br>
-            <a href="ManagementHome.html"><input type="submit" value="Login"></a>
-        </form>
-        <p>forgotten password? Click <a href="ResetPassword.html">here</a> to reset.</p>
+    <body class="login-body">
+        <section class="login">
+            <div class="login-headings">
+                <h1>Manager Login</h1>
+            </div>
+            <div class="loginElements">
+                <form action="ManagementHome.html">
+                    <label>Username</label>
+                    <input type="text" name="username" required><br><br>
+                    <label>Password</label>
+                    <input type="password" name="password" required><br><br>
+                    <a href="ManagementHome.html"><input type="submit" value="Login"></a>
+                </form>
+                <p>forgotten password? Click <a href="ResetPassword.html">here</a> to reset.</p>
+            </div>
+        </section>
     </body>
 </html>
