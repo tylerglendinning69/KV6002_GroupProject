@@ -11,6 +11,17 @@ h2 {
     text-align: center;
 }
 
+form {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+}
+
+input {
+    padding: 5px;
+    margin-top: 5px;
+}
+
 /*This is all the css for login page*/
 .login{
     justify-content: center;
