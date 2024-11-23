@@ -18,32 +18,114 @@
             </div>
         </div>
         <script>
-            // Example data
-            const data = [
-                { Role: "Cashier", CompletionTime: "8 hours" },
-                { Role: "Shelf Stacker", CompletionTime: "8 hours" },
-                { Role: "Customer Care", CompletionTime: "4 hours" },
-                { Role: "Cleaning", CompletionTime: "2 hours" },
-            ];
+            let roles = []; // Declare roles globally to keep track of them.
+        
+            // Function to parse CSV data
+            function parseCSV(data) {
+                const rows = data.split("\n");
+                const headers = rows[0].split(",");
+                const parsedData = rows.slice(1).map(row => {
+                    const values = row.split(",");
+                    return headers.reduce((acc, header, index) => {
+                        acc[header.trim()] = values[index].trim();
+                        return acc;
+                    }, {});
+                });
+                return parsedData;
+            }
+        
+            // Fetch roles from the CSV file
+            fetch('roles.csv')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to load CSV file");
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    roles = parseCSV(data); // Store parsed roles in the global array
+                    renderTable();
+                })
+                .catch(error => console.error('Error fetching roles:', error));
+        
+            // Function to render the table
+            function renderTable() {
+                const container = document.querySelector('.role-container');
+        
+                // Clear existing content (if any)
+                container.innerHTML = `
+                    <div class="header">Role</div>
+                    <div class="header">CompletionTime</div>
+                    <div class="header">Edit</div>
+                    <div class="header">Remove</div>
+                `;
+        
+                // Populate the grid dynamically
+                roles.forEach((item, index) => {
+                    const roleDiv = document.createElement('div');
+                    const timeDiv = document.createElement('div');
+                    const editDiv = document.createElement('div');
+                    const removeDiv = document.createElement('div');
+        
+                    roleDiv.textContent = item.Role;
+                    timeDiv.textContent = item.CompletionTime;
+        
+                    // Create Edit button
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Edit';
+                    editButton.onclick = () => handleEditRole(index, item.Role);
+                    editDiv.appendChild(editButton);
+        
+                    // Create Remove button
+                    const removeButton = document.createElement('button');
+                    removeButton.textContent = 'Remove';
+                    removeButton.onclick = () => handleRemoveRole(index);
+                    removeDiv.appendChild(removeButton);
+        
+                    container.appendChild(roleDiv);
+                    container.appendChild(timeDiv);
+                    container.appendChild(editDiv);
+                    container.appendChild(removeDiv);
+                });
+            }
+        
+            // Handle Edit Role
+            function handleEditRole(index, roleName) {
+                const role = roles[index];
+                const query = `?index=${index}&roleName=${encodeURIComponent(role.Role)}&completionTime=${encodeURIComponent(role.CompletionTime)}`;
+                window.location.href = `MEditRole.html${query}`;
+            }
 
-            // Container to append data
-            const container = document.querySelector('.role-container');
+            // Detect updated role data on page load and update the table if changes were made
+            document.addEventListener('DOMContentLoaded', () => {
+                const updatedRole = JSON.parse(localStorage.getItem('updatedRole'));
+                if (updatedRole) {
+                    // Update the role in the global roles array
+                    roles[updatedRole.index].Role = updatedRole.roleName;
+                    roles[updatedRole.index].CompletionTime = updatedRole.completionTime;
 
-            // Populate the grid dynamically
-            data.forEach(item => {
-                const roleDiv = document.createElement('div');
-                const timeDiv = document.createElement('div');
+                    // Clear the updatedRole key to avoid repeated updates
+                    localStorage.removeItem('updatedRole');
 
-                roleDiv.textContent = item.Role;
-                timeDiv.textContent = item.CompletionTime;
-
-                container.appendChild(roleDiv);
-                container.appendChild(timeDiv);
+                    // Re-render the table with updated data
+                    renderTable();
+                }
             });
+
+        
+            // Handle Remove Role
+            function handleRemoveRole(index) {
+                const confirmed = confirm(`Are you sure you want to remove the role "${roles[index].Role}"?`);
+                if (confirmed) {
+                    roles.splice(index, 1); // Remove the role from the array
+                    renderTable(); // Re-render the table with updated roles
+                }
+            }
         </script>
+        
+        
+        
 
         <a href="MAddRole.html"><button name="AddRole" type="button">Add Role</button></a>
-        <a href="MEditRole.html"><button name="EditRole" type="button">Edit Role</button></a>
-        <a href="MRemoveRole.html"><button name="RemoveRole" type="button">Remove Role</button></a>
     </body>
 </html>

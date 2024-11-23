@@ -1,12 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <link href="TB05css.css" rel="stylesheet">
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Edit Role</title>
-    </head>
-    <body>
-        <p>This is where the Edit Role page will be</p>
-    </body>
+<head>
+    <link href="TB05css.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Role</title>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Edit Role</h2>
+        <form id="editRoleForm">
+            <label for="roleName">Role Name:</label>
+            <input type="text" id="roleName" name="roleName" required>
+            
+            <label for="completionTime">Completion Time (hours):</label>
+            <select id="completionTime" name="completionTime">
+                <option value="2">2 hours</option>
+                <option value="4">4 hours</option>
+                <option value="8">8 hours</option>
+                <option value="10">10 hours</option>
+                <option value="12">12 hours</option>
+            </select>
+            
+            <div class="button-container">
+                <button type="button" id="confirmButton">Confirm</button>
+                <button type="button" id="cancelButton">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Retrieve the role data passed via URL query parameters
+        const params = new URLSearchParams(window.location.search);
+        const index = params.get('index');
+        const roleName = params.get('roleName');
+        const completionTime = params.get('completionTime');
+
+        // Pre-fill the form fields with the current role values
+        document.getElementById('roleName').value = roleName;
+        document.getElementById('completionTime').value = completionTime;
+
+        // Handle Confirm button click
+        document.getElementById('confirmButton').addEventListener('click', () => {
+            const updatedRole = {
+                index: index,
+                roleName: document.getElementById('roleName').value,
+                completionTime: document.getElementById('completionTime').value
+            };
+
+            // Pass updated data back to the management page
+            localStorage.setItem('updatedRole', JSON.stringify(updatedRole));
+            window.location.href = 'MRoleManagement.html';
+        });
+
+        // Handle Cancel button click
+        document.getElementById('cancelButton').addEventListener('click', () => {
+            window.location.href = 'MRoleManagement.html';
+        });
+    </script>
+</body>
 </html>
