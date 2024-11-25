@@ -15,11 +15,11 @@
             
             <label for="completionTime">Completion Time (hours):</label>
             <select id="completionTime" name="completionTime">
-                <option value="2">2 hours</option>
-                <option value="4">4 hours</option>
-                <option value="8">8 hours</option>
-                <option value="10">10 hours</option>
-                <option value="12">12 hours</option>
+                <option value="2 hours">2 hours</option>
+                <option value="4 hours">4 hours</option>
+                <option value="8 hours">8 hours</option>
+                <option value="10 hours">10 hours</option>
+                <option value="12 hours">12 hours</option>
             </select>
             
             <div class="button-container">
@@ -42,19 +42,23 @@
 
         // Handle Confirm button click
         document.getElementById('confirmButton').addEventListener('click', () => {
+            const storedRoles = JSON.parse(localStorage.getItem('roles')) || [];
             const updatedRole = {
-                index: index,
-                roleName: document.getElementById('roleName').value,
-                completionTime: document.getElementById('completionTime').value
+                Role: document.getElementById('roleName').value,
+                CompletionTime: document.getElementById('completionTime').value
             };
 
-            // Pass updated data back to the management page
-            localStorage.setItem('updatedRole', JSON.stringify(updatedRole));
+            // Update the role in the array
+            storedRoles[index] = updatedRole;
+            localStorage.setItem('roles', JSON.stringify(storedRoles)); // Save updated roles to localStorage
+
+            // Redirect back to role management page
             window.location.href = 'MRoleManagement.html';
         });
 
         // Handle Cancel button click
         document.getElementById('cancelButton').addEventListener('click', () => {
+            // Simply redirect back to the role management page without changes
             window.location.href = 'MRoleManagement.html';
         });
     </script>
