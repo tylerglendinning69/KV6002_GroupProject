@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="TB05css.css" rel="stylesheet">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Shift Management</title>
+    </head>
+    <body>
+        <h3>Schedule</h3>
+        <div class="schedule" id="schedule"></div>
+    
+        <script>
+            const scheduleContainer = document.getElementById('schedule');
+        
+            // Load schedule from localStorage or set default
+            function loadSchedule() {
+                // Default schedule data
+                const defaultSchedule = { startHour: 8, endHour: 18 };
+        
+                // Get schedule data from localStorage
+                const scheduleData = JSON.parse(localStorage.getItem('scheduleData')) || defaultSchedule;
+        
+                // Generate the schedule
+                generateSchedule(scheduleData.startHour, scheduleData.endHour);
+            }
+        
+            function generateSchedule(startHour, endHour) {
+                // Clear existing schedule
+                scheduleContainer.innerHTML = '';
+        
+                // Generate headers
+                const days = ["TIME/DAY", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+                days.forEach(day => {
+                    const header = document.createElement('div');
+                    header.textContent = day;
+                    header.classList.add('header');
+                    scheduleContainer.appendChild(header);
+                });
+        
+                // Generate rows
+                for (let hour = startHour; hour < endHour; hour++) {
+                    const currentHour = hour === 24 ? '00:00' : `${String(hour).padStart(2, '0')}:00`;
+                    const nextHour = hour + 1 === 24 ? '00:00' : `${String((hour + 1) % 24).padStart(2, '0')}:00`;
+        
+                    // Add time column
+                    const timeColumn = document.createElement('div');
+                    timeColumn.textContent = `${currentHour}-${nextHour}`;
+                    timeColumn.classList.add('time-column');
+                    scheduleContainer.appendChild(timeColumn);
+        
+                    // Add cells for each day
+                    for (let day = 0; day < 7; day++) {
+                        const cell = document.createElement('div');
+                        cell.classList.add('schedule-cell');
+                        scheduleContainer.appendChild(cell);
+                    }
+                }
+        
+                // Apply CSS grid
+                scheduleContainer.style.gridTemplateColumns = `repeat(${days.length}, 1fr)`;
+                scheduleContainer.style.gridAutoRows = `minmax(40px, auto)`;
+            }
+        
+            // Load the schedule on page load
+            document.addEventListener('DOMContentLoaded', loadSchedule);
+        </script>
+        <a href="MAddShift.html"><button name="AddNewShift" type="button">Add New Shift</button></a>
+        <a href="MEditShift.html"><button name="EditExistingShift" type="button">Edit Existing Shift</button></a>
+        <a href="MWorkHours.html"><button name="ChangeOpenWorkHours" type="button">Change Open Work Hours</button></a>
+    </body>
+</html>
