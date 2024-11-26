@@ -17,6 +17,7 @@
                     <div class="header">Time</div>
                     <div class="header">Role</div>
                     <div class="header">Email</div>
+                    <div class="header">Remove</div>
                 </div>
             </div>
             <!-- Button Section -->
@@ -26,9 +27,6 @@
                 </a>
                 <a href="MEditVolunteer.html">
                     <button name="EditVolunteer" type="button">Edit Volunteer</button>
-                </a>
-                <a href="MRemoveVolunteer.html">
-                    <button name="RemoveVolunteer" type="button">Remove Volunteer</button>
                 </a>
             </div>
         </div>
@@ -50,16 +48,34 @@
                 const timeDiv = document.createElement('div');
                 const roleDiv = document.createElement('div');
                 const emailDiv = document.createElement('div');
+                const removeVolunteerDiv = document.createElement('div');
 
                 nameDiv.textContent = item.name;
                 timeDiv.textContent = item.time;
                 roleDiv.textContent = item.role;
                 emailDiv.textContent = item.email;
 
+                // Create remove volunteer button
+                const removeVolunteerButton = document.createElement('button');
+                removeVolunteerButton.textContent = 'Remove';
+                removeVolunteerButton.onclick = () => {
+                    if (confirm(`Are you sure you want to remove ${item.name}?`)) {
+
+                        container.removeChild(nameDiv);
+                        container.removeChild(timeDiv);
+                        container.removeChild(roleDiv);
+                        container.removeChild(emailDiv);
+                        container.removeChild(removeVolunteerDiv);
+                    }
+                };
+
+                removeVolunteerDiv.appendChild(removeVolunteerButton);
+
                 container.appendChild(nameDiv);
                 container.appendChild(timeDiv);
                 container.appendChild(roleDiv);
                 container.appendChild(emailDiv);
+                container.appendChild(removeVolunteerDiv)
             });
         </script>
     </body>
