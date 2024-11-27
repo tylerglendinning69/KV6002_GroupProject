@@ -13,15 +13,6 @@
             <label for="roleName">Role Name:</label>
             <input type="text" id="roleName" name="roleName" required>
             
-            <label for="completionTime">Completion Time (hours):</label>
-            <select id="completionTime" name="completionTime">
-                <option value="2 hours">2 hours</option>
-                <option value="4 hours">4 hours</option>
-                <option value="8 hours">8 hours</option>
-                <option value="10 hours">10 hours</option>
-                <option value="12 hours">12 hours</option>
-            </select>
-            
             <div class="button-container">
                 <button type="button" id="confirmButton">Confirm</button>
                 <button type="button" id="cancelButton">Cancel</button>
@@ -30,35 +21,20 @@
     </div>
 
     <script>
-        // Retrieve the role data passed via URL query parameters
         const params = new URLSearchParams(window.location.search);
         const index = params.get('index');
         const roleName = params.get('roleName');
-        const completionTime = params.get('completionTime');
 
-        // Pre-fill the form fields with the current role values
         document.getElementById('roleName').value = roleName;
-        document.getElementById('completionTime').value = completionTime;
 
-        // Handle Confirm button click
         document.getElementById('confirmButton').addEventListener('click', () => {
             const storedRoles = JSON.parse(localStorage.getItem('roles')) || [];
-            const updatedRole = {
-                Role: document.getElementById('roleName').value,
-                CompletionTime: document.getElementById('completionTime').value
-            };
-
-            // Update the role in the array
-            storedRoles[index] = updatedRole;
-            localStorage.setItem('roles', JSON.stringify(storedRoles)); // Save updated roles to localStorage
-
-            // Redirect back to role management page
+            storedRoles[index].Role = document.getElementById('roleName').value.trim();
+            localStorage.setItem('roles', JSON.stringify(storedRoles));
             window.location.href = 'MRoleManagement.html';
         });
 
-        // Handle Cancel button click
         document.getElementById('cancelButton').addEventListener('click', () => {
-            // Simply redirect back to the role management page without changes
             window.location.href = 'MRoleManagement.html';
         });
     </script>

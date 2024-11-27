@@ -13,28 +13,28 @@
                 <div class="role-container">
                     <!-- Headers -->
                     <div class="header">Role</div>
-                    <div class="header">CompletionTime</div>
+                    <div class="header">Edit</div>
+                    <div class="header">Remove</div>
                 </div>
             </div>
         </div>
         <script>
-            let roles = []; // Declare roles globally to keep track of them.
-        
+            let roles = [];
+
             // Function to parse CSV data
             function parseCSV(data) {
                 const rows = data.split("\n");
                 const headers = rows[0].split(",");
-                const parsedData = rows.slice(1).map(row => {
+                return rows.slice(1).map(row => {
                     const values = row.split(",");
                     return headers.reduce((acc, header, index) => {
-                        acc[header.trim()] = values[index].trim();
+                        acc[header.trim()] = values[index]?.trim() || '';
                         return acc;
                     }, {});
                 });
-                return parsedData;
             }
-        
-            // Fetch roles from the CSV file (only if localStorage is empty)
+
+            // Fetch roles from CSV
             function loadRolesFromCSV() {
                 fetch('roles.csv')
                     .then(response => {
@@ -44,99 +44,72 @@
                         return response.text();
                     })
                     .then(data => {
-                        roles = parseCSV(data); // Store parsed roles in the global array
-                        localStorage.setItem('roles', JSON.stringify(roles)); // Save roles to localStorage
+                        roles = parseCSV(data);
+                        localStorage.setItem('roles', JSON.stringify(roles));
                         renderTable();
                     })
                     .catch(error => console.error('Error fetching roles:', error));
             }
-        
-            // Function to render the table
+
+            // Render the table
             function renderTable() {
                 const container = document.querySelector('.role-container');
-        
-                // Clear existing content (if any)
+
                 container.innerHTML = `
                     <div class="header">Role</div>
-                    <div class="header">CompletionTime</div>
                     <div class="header">Edit</div>
                     <div class="header">Remove</div>
                 `;
-        
-                // Populate the grid dynamically
+
                 roles.forEach((item, index) => {
                     const roleDiv = document.createElement('div');
-                    const timeDiv = document.createElement('div');
                     const editDiv = document.createElement('div');
                     const removeDiv = document.createElement('div');
-        
+
                     roleDiv.textContent = item.Role;
-                    timeDiv.textContent = item.CompletionTime;
-        
-                    // Create Edit button
+
+                    // Edit Button
                     const editButton = document.createElement('button');
                     editButton.textContent = 'Edit';
                     editButton.onclick = () => handleEditRole(index);
                     editDiv.appendChild(editButton);
-        
-                    // Create Remove button
+
+                    // Remove Button
                     const removeButton = document.createElement('button');
                     removeButton.textContent = 'Remove';
                     removeButton.onclick = () => handleRemoveRole(index);
                     removeDiv.appendChild(removeButton);
-        
+
                     container.appendChild(roleDiv);
-                    container.appendChild(timeDiv);
                     container.appendChild(editDiv);
                     container.appendChild(removeDiv);
                 });
             }
-        
-            // Handle Edit Role
+
             function handleEditRole(index) {
                 const role = roles[index];
-                const query = `?index=${index}&roleName=${encodeURIComponent(role.Role)}&completionTime=${encodeURIComponent(role.CompletionTime)}`;
+                const query = `?index=${index}&roleName=${encodeURIComponent(role.Role)}`;
                 window.location.href = `MEditRole.html${query}`;
             }
-        
-            // Handle Remove Role
+
             function handleRemoveRole(index) {
-                const confirmed = confirm(`Are you sure you want to remove the role "${roles[index].Role}"?`);
-                if (confirmed) {
-                    roles.splice(index, 1); // Remove the role from the array
-                    localStorage.setItem('roles', JSON.stringify(roles)); // Save updated roles to localStorage
-                    renderTable(); // Re-render the table with updated roles
+                if (confirm(`Are you sure you want to remove the role "${roles[index].Role}"?`)) {
+                    roles.splice(index, 1);
+                    localStorage.setItem('roles', JSON.stringify(roles));
+                    renderTable();
                 }
             }
-        
-            // Load roles from localStorage or CSV on page load
+
             document.addEventListener('DOMContentLoaded', () => {
                 const storedRoles = localStorage.getItem('roles');
                 if (storedRoles) {
-                    roles = JSON.parse(storedRoles); // Load roles from localStorage
+                    roles = JSON.parse(storedRoles);
                     renderTable();
                 } else {
-                    loadRolesFromCSV(); // Load roles from CSV if localStorage is empty
-                }
-        
-                // Check for an updated role in localStorage
-                const updatedRole = JSON.parse(localStorage.getItem('updatedRole'));
-                if (updatedRole) {
-                    roles[updatedRole.index].Role = updatedRole.roleName;
-                    roles[updatedRole.index].CompletionTime = updatedRole.completionTime;
-        
-                    // Save updated roles and clear the temporary updatedRole
-                    localStorage.setItem('roles', JSON.stringify(roles));
-                    localStorage.removeItem('updatedRole');
-        
-                    renderTable(); // Re-render the table with the updated role
+                    loadRolesFromCSV();
                 }
             });
         </script>
-        
-        
-        
-        
 
         <a href="MAddRole.html"><button name="AddRole" type="button">Add Role</button></a>
     </body>

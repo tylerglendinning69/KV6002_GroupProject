@@ -13,56 +13,24 @@
             <label for="roleName">Role Name:</label>
             <input type="text" id="roleName" name="roleName" required>
             
-            <label for="completionTime">Completion Time (hours):</label>
-            <select id="completionTime" name="completionTime" required>
-                <option value="" disabled selected>Select time</option>
-                <option value="2">2 hours</option>
-                <option value="4">4 hours</option>
-                <option value="8">8 hours</option>
-                <option value="10">10 hours</option>
-                <option value="12">12 hours</option>
-            </select>
-
             <div class="button-container">
-                <button type="button" id="confirmButton" disabled>Confirm</button>
+                <button type="button" id="confirmButton">Confirm</button>
                 <button type="button" id="cancelButton">Cancel</button>
             </div>
         </form>
     </div>
 
     <script>
-        const roleNameInput = document.getElementById('roleName');
-        const completionTimeSelect = document.getElementById('completionTime');
-        const confirmButton = document.getElementById('confirmButton');
+        document.getElementById('confirmButton').addEventListener('click', () => {
+            const newRole = { Role: document.getElementById('roleName').value.trim() };
 
-        // Function to check if all fields are valid
-        function validateForm() {
-            const roleName = roleNameInput.value.trim();
-            const completionTime = completionTimeSelect.value;
-            confirmButton.disabled = !(roleName && completionTime); // Enable button only if both fields are filled
-        }
-
-        // Add event listeners to form inputs
-        roleNameInput.addEventListener('input', validateForm);
-        completionTimeSelect.addEventListener('change', validateForm);
-
-        // Handle Confirm button click
-        confirmButton.addEventListener('click', () => {
-            const newRole = {
-                roleName: roleNameInput.value.trim(),
-                completionTime: completionTimeSelect.value
-            };
-
-            // Save new role to localStorage
             const storedRoles = JSON.parse(localStorage.getItem('roles')) || [];
-            storedRoles.push({ Role: newRole.roleName, CompletionTime: `${newRole.completionTime} hours` });
+            storedRoles.push(newRole);
             localStorage.setItem('roles', JSON.stringify(storedRoles));
 
-            // Redirect to role management page
             window.location.href = 'MRoleManagement.html';
         });
 
-        // Handle Cancel button click
         document.getElementById('cancelButton').addEventListener('click', () => {
             window.location.href = 'MRoleManagement.html';
         });
