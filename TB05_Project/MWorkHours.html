@@ -47,9 +47,20 @@
                     return;
                 }
 
-                // Save schedule to localStorage
-                localStorage.setItem('scheduleData', JSON.stringify({ startHour, endHour }));
-                alert('Schedule updated successfully!');
+                // Show a confirmation dialog before proceeding
+                const confirmChange = window.confirm('Are you sure you want to update the schedule? This will delete all current shifts.');
+
+                if (confirmChange) {
+                    // Remove all current shifts from localStorage
+                    localStorage.removeItem('shifts');
+
+                    // Save updated schedule (start/end hours) to localStorage
+                    localStorage.setItem('scheduleData', JSON.stringify({ startHour, endHour }));
+
+                    alert('Schedule updated successfully! All shifts have been cleared.');
+                } else {
+                    alert('Schedule update canceled.');
+                }
             });
 
             // Load form data on page load

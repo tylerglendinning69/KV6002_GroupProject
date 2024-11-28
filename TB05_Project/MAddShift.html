@@ -7,6 +7,149 @@
         <title>Shift Management</title>
     </head>
     <body>
-        <p>This is where the Adding a shift page will be</p>
+        <header>
+            <h2>Add Shift</h2>
+        </header>
+        <div class="main-container">
+            <h3>Select a Time Slot</h3>
+            <label for="day-select">Day:</label>
+            <select id="day-select">
+                <option value="" selected disabled>Select a day</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
+            </select>
+
+            <label for="start-time">Start Time:</label>
+            <select id="start-time"></select>
+
+            <label for="end-time">End Time:</label>
+            <select id="end-time"></select>
+
+            <h3>Assign Roles</h3>
+            <div id="roles-container">
+                <!-- Roles checkboxes will be dynamically loaded here -->
+            </div>
+
+            <button id="save-shift" type="button">Save Shift</button>
+        </div>
+
+        <script>
+            const rolesContainer = document.getElementById('roles-container');
+            const daySelect = document.getElementById('day-select');
+            const startTimeSelect = document.getElementById('start-time');
+            const endTimeSelect = document.getElementById('end-time');
+            const shifts = JSON.parse(localStorage.getItem('shifts')) || [];
+
+            // Load and generate the time dropdowns
+            function generateTimeDropdowns(startHour, endHour) {
+                // Clear existing options
+                startTimeSelect.innerHTML = '';
+                endTimeSelect.innerHTML = '';
+
+                for (let hour = startHour; hour < endHour; hour++) {
+                    const timeOption = `${String(hour).padStart(2, '0')}:00`;
+                    const optionElement = document.createElement('option');
+                    optionElement.value = timeOption;
+                    optionElement.textContent = timeOption;
+                    startTimeSelect.appendChild(optionElement);
+                }
+
+                // End time dropdown needs one extra hour
+                for (let hour = startHour + 1; hour <= endHour; hour++) {
+                    const timeOption = `${String(hour % 24).padStart(2, '0')}:00`;
+                    const optionElement = document.createElement('option');
+                    optionElement.value = timeOption;
+                    optionElement.textContent = timeOption;
+                    endTimeSelect.appendChild(optionElement);
+                }
+            }
+
+            // Load roles from localStorage
+            function loadRoles() {
+                const roles = JSON.parse(localStorage.getItem('roles')) || [];
+                rolesContainer.innerHTML = '';
+
+                roles.forEach(role => {
+                    const roleCheckbox = document.createElement('input');
+                    roleCheckbox.type = 'checkbox';
+                    roleCheckbox.value = role.Role;
+                    roleCheckbox.id = `role-${role.Role}`;
+
+                    const roleLabel = document.createElement('label');
+                    roleLabel.textContent = role.Role;
+                    roleLabel.htmlFor = `role-${role.Role}`;
+
+                    rolesContainer.appendChild(roleCheckbox);
+                    rolesContainer.appendChild(roleLabel);
+                    rolesContainer.appendChild(document.createElement('br'));
+                });
+            }
+
+            // Save the shift
+            function saveShift() {
+                const selectedDay = daySelect.value;
+                const startTime = startTimeSelect.value;
+                const endTime = endTimeSelect.value;
+
+                if (!selectedDay) {
+                    alert("Please select a day.");
+                    return;
+                }
+
+                if (!startTime || !endTime) {
+                    alert("Please select both start and end times.");
+                    return;
+                }
+
+                if (startTime >= endTime) {
+                    alert("Start time must be earlier than end time.");
+                    return;
+                }
+
+                const selectedRoles = Array.from(rolesContainer.querySelectorAll('input[type="checkbox"]:checked')).map(
+                    checkbox => checkbox.value
+                );
+
+                if (selectedRoles.length === 0) {
+                    alert("Please select at least one role.");
+                    return;
+                }
+
+                const shift = {
+                    day: selectedDay,
+                    time: `${startTime}-${endTime}`,
+                    roles: selectedRoles
+                };
+
+                shifts.push(shift);
+                localStorage.setItem('shifts', JSON.stringify(shifts));
+
+                alert("Shift saved successfully!");
+
+                // Reset the form
+                daySelect.value = '';
+                startTimeSelect.value = '';
+                endTimeSelect.value = '';
+                rolesContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+            }
+
+            document.getElementById('save-shift').addEventListener('click', saveShift);
+
+            // Initialize the page
+            document.addEventListener('DOMContentLoaded', () => {
+                const defaultSchedule = { startHour: 8, endHour: 18 };
+                const scheduleData = JSON.parse(localStorage.getItem('scheduleData')) || defaultSchedule;
+                generateTimeDropdowns(scheduleData.startHour, scheduleData.endHour);
+                loadRoles();
+            });
+        </script>
+        <a href="MShiftManagement.html"><button name="BackToShift" type="button">Back To Shift Management</button></a>
     </body>
 </html>

@@ -23,6 +23,8 @@
         
                 // Generate the schedule
                 generateSchedule(scheduleData.startHour, scheduleData.endHour);
+
+                displayShifts();
             }
         
             function generateSchedule(startHour, endHour) {
@@ -50,9 +52,13 @@
                     scheduleContainer.appendChild(timeColumn);
         
                     // Add cells for each day
-                    for (let day = 0; day < 7; day++) {
+                    for (let dayIndex = 1; dayIndex < days.length; dayIndex++) {
+                        const dayName = days[dayIndex];
+
                         const cell = document.createElement('div');
                         cell.classList.add('schedule-cell');
+                        cell.dataset.time = `${currentHour}-${nextHour}`; // Add time attribute
+                        cell.dataset.day = dayName; // Add day attribute
                         scheduleContainer.appendChild(cell);
                     }
                 }
@@ -62,11 +68,44 @@
                 scheduleContainer.style.gridAutoRows = `minmax(40px, auto)`;
             }
         
+            function displayShifts() {
+                const shifts = JSON.parse(localStorage.getItem('shifts')) || [];
+
+                shifts.forEach(shift => {
+                    const { day, time, roles } = shift;
+                    const [startTime, endTime] = time.split('-');  // Split the time range into start and end
+
+                    const startHour = parseInt(startTime.split(':')[0], 10);  // Extract the start hour
+                    const endHour = parseInt(endTime.split(':')[0], 10);  // Extract the end hour
+
+                    // Loop through each hour in the range
+                    for (let hour = startHour; hour < endHour; hour++) {
+                        const currentTime = `${String(hour).padStart(2, '0')}:00-${String(hour + 1).padStart(2, '0')}:00`;
+
+                        // Find all cells matching the shift's day and the current hour
+                        const cells = Array.from(scheduleContainer.querySelectorAll('.schedule-cell')).filter(cell => {
+                            return cell.dataset.day === day && cell.dataset.time === currentTime;
+                        });
+
+                        // Update each matching cell with the shift information
+                        cells.forEach(cell => {
+                            cell.style.backgroundColor = "#ADD8E6"; // Light blue color to represent the shift
+                            cell.style.color = "black";
+                            cell.style.textAlign = "center";
+
+                            // Add roles as content in the cell
+                            cell.innerHTML = `<div>${roles.join(", ")}</div>`;
+                        });
+                    }
+                });
+            }
+
             // Load the schedule on page load
             document.addEventListener('DOMContentLoaded', loadSchedule);
         </script>
         <a href="MAddShift.html"><button name="AddNewShift" type="button">Add New Shift</button></a>
         <a href="MEditShift.html"><button name="EditExistingShift" type="button">Edit Existing Shift</button></a>
         <a href="MWorkHours.html"><button name="ChangeOpenWorkHours" type="button">Change Open Work Hours</button></a>
+        <a href="ManagementHome.html"><button name="ManagementHome" type="button">Back To Homepage</button></a>
     </body>
 </html>

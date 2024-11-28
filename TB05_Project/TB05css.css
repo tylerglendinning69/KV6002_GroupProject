@@ -276,3 +276,26 @@ button:hover {
 a {
     text-decoration: none;
 }
+
+/* Highlight selected time slot */
+.timetable-cell.selected {
+    background-color: #90caf9; /* Light blue for selection */
+    color: #fff;
+    border: 2px solid #005f4b; /* Darker border for emphasis */
+}
+
+/* Role selection area styling */
+#roles-container {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+#roles-container label {
+    display: block;
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+}
