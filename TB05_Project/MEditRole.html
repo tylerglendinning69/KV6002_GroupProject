@@ -28,25 +28,11 @@
         document.getElementById('roleName').value = roleName;
 
         document.getElementById('confirmButton').addEventListener('click', () => {
-            const roleName = document.getElementById('roleName').value.trim();
-            const roleId = new URLSearchParams(window.location.search).get('id');  // Assuming the ID is passed in the query string
-
-            const updatedRole = { Role: roleName, id: roleId };  // Keep the same ID during the update
-
-            fetch(`http://localhost:3000/roles/${roleId}`, {  // Send the ID to update the correct role
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedRole),
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Failed to update role");
-                    }
-                    window.location.href = 'MRoleManagement.html';
-                })
-                .catch(error => console.error('Error updating role:', error));
+            const storedRoles = JSON.parse(localStorage.getItem('roles')) || [];
+            storedRoles[index].Role = document.getElementById('roleName').value.trim();
+            localStorage.setItem('roles', JSON.stringify(storedRoles));
+            window.location.href = 'MRoleManagement.html';
         });
-
 
         document.getElementById('cancelButton').addEventListener('click', () => {
             window.location.href = 'MRoleManagement.html';
