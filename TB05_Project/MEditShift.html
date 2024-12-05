@@ -1,12 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <link href="TB05css.css" rel="stylesheet">
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Shift Management</title>
-    </head>
-    <body>
-        <p>This is where the Editing a shift page will be</p>
-    </body>
+<head>
+    <link href="TB05css.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Shifts</title>
+</head>
+<body>
+    <h1>Edit or Remove Shifts</h1>
+
+    <div id="shiftsContainer">
+        <h2>Existing Shifts</h2>
+        <div id="shiftsList">
+            <!-- Shifts will be dynamically loaded here -->
+        </div>
+    </div>
+
+    <div id="editShiftContainer" style="display: none;">
+        <h2>Edit Shift</h2>
+        <form id="editShiftForm">
+            <label for="editDay">Day:</label>
+            <select id="editDay" required>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
+            </select>
+
+            <label for="editStartTime">Start Time:</label>
+            <input type="time" id="editStartTime" required>
+
+            <label for="editEndTime">End Time:</label>
+            <input type="time" id="editEndTime" required>
+
+            <label for="editRoles">Roles:</label>
+            <input type="text" id="editRoles" placeholder="Comma-separated roles (e.g., Manager, Assistant)" required>
+
+            <button type="submit">Save Changes</button>
+        </form>
+        <button id="cancelEdit">Cancel</button>
+    </div>
+
+    <a href="MShiftManagement.html"><button>Back to Shift Management</button></a>
+
+    <script>
+        const shiftsContainer = document.getElementById('shiftsContainer');
+        const shiftsList = document.getElementById('shiftsList');
+        const editShiftContainer = document.getElementById('editShiftContainer');
+        const editShiftForm = document.getElementById('editShiftForm');
+        const cancelEditButton = document.getElementById('cancelEdit');
+
+        let shifts = JSON.parse(localStorage.getItem('shifts')) || [];
+        let editingShiftIndex = null;
+
+        // Load work hours
+        const workHours = JSON.parse(localStorage.getItem('scheduleData')) || { startHour: 8, endHour: 18 };
+
+        function loadShifts() {
+            shiftsList.innerHTML = '';
+            if (shifts.length === 0) {
+                shiftsList.innerHTML = '<p>No shifts available.</p>';
+                return;
+            }
+
+            shifts.forEach((shift, index) => {
+                const shiftElement = document.createElement('div');
+                shiftElement.classList.add('shift-item');
+                shiftElement.innerHTML = `
+                    <p><strong>Day:</strong> ${shift.day}</p>
+                    <p><strong>Time:</strong> ${shift.time}</p>
+                    <p><strong>Roles:</strong> ${shift.roles.join(', ')}</p>
+                    <button onclick="editShift(${index})">Edit</button>
+                    <button onclick="removeShift(${index})">Remove</button>
+                `;
+                shiftsList.appendChild(shiftElement);
+            });
+        }
+
+        function editShift(index) {
+            editingShiftIndex = index;
+            const shift = shifts[index];
+            document.getElementById('editDay').value = shift.day;
+            const [startTime, endTime] = shift.time.split('-');
+            document.getElementById('editStartTime').value = startTime;
+            document.getElementById('editEndTime').value = endTime;
+            document.getElementById('editRoles').value = shift.roles.join(', ');
+
+            shiftsContainer.style.display = 'none';
+            editShiftContainer.style.display = 'block';
+        }
+
+        function removeShift(index) {
+            if (confirm('Are you sure you want to remove this shift?')) {
+                shifts.splice(index, 1);
+                localStorage.setItem('shifts', JSON.stringify(shifts));
+                loadShifts();
+                alert('Shift removed successfully!');
+            }
+        }
+
+        editShiftForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const updatedDay = document.getElementById('editDay').value;
+            const updatedStartTime = document.getElementById('editStartTime').value;
+            const updatedEndTime = document.getElementById('editEndTime').value;
+            const updatedRoles = document.getElementById('editRoles').value.split(',').map(role => role.trim());
+
+            const updatedStartHour = parseInt(updatedStartTime.split(':')[0], 10);
+            const updatedEndHour = parseInt(updatedEndTime.split(':')[0], 10);
+
+            if (updatedStartHour >= updatedEndHour) {
+                alert('Start time must be before end time.');
+                return;
+            }
+
+            if (updatedStartHour < workHours.startHour || updatedEndHour > workHours.endHour) {
+                alert(`Shift time must be within working hours (${workHours.startHour}:00 - ${workHours.endHour}:00).`);
+                return;
+            }
+
+            shifts[editingShiftIndex] = {
+                day: updatedDay,
+                time: `${updatedStartTime}-${updatedEndTime}`,
+                roles: updatedRoles
+            };
+
+            localStorage.setItem('shifts', JSON.stringify(shifts));
+            loadShifts();
+            alert('Shift updated successfully!');
+            cancelEdit();
+        });
+
+        cancelEditButton.addEventListener('click', cancelEdit);
+
+        function cancelEdit() {
+            shiftsContainer.style.display = 'block';
+            editShiftContainer.style.display = 'none';
+            editingShiftIndex = null;
+        }
+
+        // Load shifts on page load
+        loadShifts();
+    </script>
+</body>
 </html>
