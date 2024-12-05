@@ -15,42 +15,16 @@
     </form>
 
     <script>
-        console.log('Page loaded successfully.');
-
-        // Get the form element and add event listener for submission
-        const form = document.getElementById('addRoleForm');
-        console.log('Form element retrieved:', form);
-
-        form.addEventListener('submit', function (event) {
-            console.log('Form submission detected.');
-
-            // Prevent default form submission behavior
+        document.getElementById('addRoleForm').addEventListener('submit', function (event) {
             event.preventDefault();
-            console.log('Default form submission prevented.');
 
-            // Retrieve and trim role name input value
             const roleName = document.getElementById('roleName').value.trim();
-            console.log('Role name input value:', roleName);
-
-            // Check if the role name is not empty
-            if (!roleName) {
-                console.error('Role name is empty. Please provide a valid role name.');
-                return;
-            }
-
-            // Make POST request to the server
-            console.log('Sending POST request to add role.');
             fetch('http://localhost:3000/roles', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ Role: roleName }),
             })
-                .then(response => {
-                    console.log('Server response received:', response);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok.');
-                    }
-                    console.log('Role successfully added. Redirecting to MRoleManagement.html');
+                .then(() => {
                     window.location.href = 'MRoleManagement.html';
                 })
                 .catch(error => console.error('Error adding role:', error));

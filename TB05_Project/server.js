@@ -41,7 +41,6 @@ app.get('/roles', (req, res) => {
 
 // Auto-generate unique ID for new roles
 app.post('/roles', (req, res) => {
-    console.log('Request body:', req.body);
     const newRole = req.body;
 
     if (!newRole.Role) {
