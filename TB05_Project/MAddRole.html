@@ -7,32 +7,27 @@
     <title>Add Role</title>
 </head>
 <body>
-    <div class="form-container">
-        <h2>Add Role</h2>
-        <form id="addRoleForm">
-            <label for="roleName">Role Name:</label>
-            <input type="text" id="roleName" name="roleName" required>
-            
-            <div class="button-container">
-                <button type="button" id="confirmButton">Confirm</button>
-                <button type="button" id="cancelButton">Cancel</button>
-            </div>
-        </form>
-    </div>
+    <h2>Add Role</h2>
+    <form id="addRoleForm">
+        <label for="roleName">Role Name:</label>
+        <input type="text" id="roleName" required>
+        <button type="submit">Add Role</button>
+    </form>
 
     <script>
-        document.getElementById('confirmButton').addEventListener('click', () => {
-            const newRole = { Role: document.getElementById('roleName').value.trim() };
+        document.getElementById('addRoleForm').addEventListener('submit', function (event) {
+            event.preventDefault();
 
-            const storedRoles = JSON.parse(localStorage.getItem('roles')) || [];
-            storedRoles.push(newRole);
-            localStorage.setItem('roles', JSON.stringify(storedRoles));
-
-            window.location.href = 'MRoleManagement.html';
-        });
-
-        document.getElementById('cancelButton').addEventListener('click', () => {
-            window.location.href = 'MRoleManagement.html';
+            const roleName = document.getElementById('roleName').value.trim();
+            fetch('http://localhost:3000/roles', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Role: roleName }),
+            })
+                .then(() => {
+                    window.location.href = 'MRoleManagement.html';
+                })
+                .catch(error => console.error('Error adding role:', error));
         });
     </script>
 </body>
