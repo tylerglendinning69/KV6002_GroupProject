@@ -45,9 +45,16 @@ input {
     flex-direction: column;
     align-items: center;
     }
+    
+.login-image{
+    width:300px;
+    margin-left: 20px;
+}
 /* ******************************************************* */
 
 /*Volunteer Input Form*/
+
+/* Volunteer Input Form */
 
 /* General Body Styling */
 .timetable-container {
@@ -56,7 +63,7 @@ input {
 }
 
 /* Schedule Grid Layout */
-.timetable-schedule {
+.schedule {
     display: grid;
     gap: 1px;
     background-color: #ccc;
@@ -65,7 +72,7 @@ input {
 }
 
 /* Header Cells */
-.timetable-header {
+.header {
     background-color: #ddd;
     border: 1px solid #ddd;
     padding: 10px;
@@ -76,7 +83,7 @@ input {
 }
 
 /* Time Column Styling */
-.timetable-time-column {
+.time-column {
     background-color: #f0f0f0;
     border: 1px solid #ddd;
     padding: 10px;
@@ -86,17 +93,20 @@ input {
 }
 
 /* Individual Schedule Cells */
-.timetable-cell {
+.schedule-cell {
     background-color: #f0f0f0;
     border: 1px solid #ddd;
     padding: 10px;
     text-align: center;
     position: relative;
     cursor: pointer;
+    display: flex;
+    flex-direction: column; /* Stack roles vertically */
+    gap: 5px; /* Add spacing between roles */
 }
 
 /* Role Elements */
-.timetable-role {
+.role-item {
     display: block;
     padding: 5px;
     margin: 2px 0;
@@ -108,7 +118,7 @@ input {
     text-align: center;
 }
 
-.timetable-role.selected {
+.role-item.selected {
     background-color: #90caf9;
     color: white;
 }
@@ -136,14 +146,14 @@ input {
 
 /* Small screens (max width: 768px) */
 @media (max-width: 768px) {
-    .timetable-header,
-    .timetable-time-column,
-    .timetable-cell {
+    .header,
+    .time-column,
+    .schedule-cell {
         font-size: 12px;
         padding: 8px;
     }
 
-    .timetable-role {
+    .role-item {
         font-size: 10px;
         padding: 4px;
     }
@@ -156,23 +166,24 @@ input {
 
 /* Extra-small screens (max width: 480px) */
 @media (max-width: 480px) {
-    .timetable-header,
-    .timetable-time-column,
-    .timetable-cell {
+    .header,
+    .time-column,
+    .schedule-cell {
         font-size: 10px;
         padding: 6px;
     }
 
-    .timetable-role {
+    .role-item {
         font-size: 8px;
         padding: 3px;
     }
 
-    .timetable-schedule {
+    .schedule {
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
         gap: 2px;
     }
 }
+
 
 /* ******************************************************* */
 
