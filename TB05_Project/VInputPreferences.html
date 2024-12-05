@@ -6,13 +6,11 @@
         <title>Volunteer Input Preferences</title>
         <link href="TB05css.css" rel="stylesheet">
     </head>
-    <body>
-        <header>
-            <h1>Volunteer Preferences</h1>
-        </header>
+    <body class="timetable-container">
+        <h1>Volunteer Preferences</h1>
         <h3>Select Your Roles and Availability</h3>
 
-        <div class="schedule" id="schedule"></div>
+        <div class="timetable-schedule" id="schedule"></div>
         <button id="submit" class="timetable-submit-btn">Submit Preferences</button>
 
         <script>
@@ -22,66 +20,72 @@
             // Store selected preferences
             let selectedRoles = [];
 
-            // Days and roles
+            // Separate lists for days
             const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-            let roles = []; // Roles will be fetched dynamically from a CSV file
-            const startHour = 8; // Default start time
-            const endHour = 18; // Default end time
+            let roles = [];
 
-            // Fetch roles from roles.csv
+            // Default time range (8 AM to 6 PM)
+            const defaultStartHour = 8;
+            const defaultEndHour = 18;
+
+            // Fetch roles from roles.csv on page load
             async function fetchRoles() {
                 try {
-                    const response = await fetch('roles.csv');
+                    const response = await fetch('roles.csv'); // Fetch the CSV file
                     if (!response.ok) {
                         throw new Error(`Error fetching roles.csv: ${response.statusText}`);
                     }
 
                     const text = await response.text();
-                    roles = text.split(/\r?\n/).map(line => line.trim()).filter(line => line);
+                    roles = text.split(/\r?\n/).map(line => line.trim()).filter(line => line); // Parse roles
 
                     if (roles.length === 0) {
                         throw new Error('roles.csv is empty or invalid.');
                     }
 
-                    generateSchedule();
+                    generateSchedule(); // Generate timetable once roles are loaded
                 } catch (error) {
                     scheduleContainer.innerHTML = `<p style="text-align: center; color: red;">${error.message}</p>`;
                     console.error(error.message);
                 }
             }
 
-            // Generate the schedule
+            // Generate the timetable with default time range
             function generateSchedule() {
-                scheduleContainer.innerHTML = ''; // Clear the container
-                selectedRoles = []; // Reset selections
+                const startHour = defaultStartHour;
+                const endHour = defaultEndHour;
 
-                // Generate headers
+                // Clear existing schedule
+                scheduleContainer.innerHTML = '';
+                selectedRoles = []; // Reset selected roles
+
+                // Generate the headers
                 scheduleContainer.appendChild(createHeaderCell("TIME/DAY"));
                 days.forEach(day => scheduleContainer.appendChild(createHeaderCell(day)));
 
-                // Generate time slots
+                // Generate rows for each hour
                 for (let hour = startHour; hour < endHour; hour++) {
                     const currentHour = `${String(hour).padStart(2, '0')}:00`;
                     const nextHour = `${String((hour + 1) % 24).padStart(2, '0')}:00`;
 
-                    // Add time column
+                    // Add the time column
                     scheduleContainer.appendChild(createTimeCell(`${currentHour}-${nextHour}`));
 
                     // Add cells for each day
                     days.forEach(day => {
                         const cell = document.createElement('div');
-                        cell.classList.add('schedule-cell');
+                        cell.classList.add('timetable-cell');
 
-                        // Add roles within the cell
+                        // Add roles to the cell
                         roles.forEach(role => {
                             const roleElement = document.createElement('span');
                             roleElement.textContent = role;
-                            roleElement.classList.add('role-item');
+                            roleElement.classList.add('timetable-role');
                             roleElement.dataset.day = day;
                             roleElement.dataset.time = `${currentHour}-${nextHour}`;
                             roleElement.dataset.role = role;
 
-                            // Toggle selection
+                            // Toggle selection on click
                             roleElement.addEventListener('click', () => {
                                 const roleKey = `${roleElement.dataset.day}|${roleElement.dataset.time}|${roleElement.dataset.role}`;
                                 if (roleElement.classList.contains('selected')) {
@@ -100,29 +104,30 @@
                     });
                 }
 
-                // Apply grid styling
+                // Apply CSS grid to schedule
                 scheduleContainer.style.gridTemplateColumns = `repeat(${days.length + 1}, 1fr)`; // +1 for time column
-                scheduleContainer.style.gridAutoRows = 'minmax(50px, auto)';
+                scheduleContainer.style.gridAutoRows = `minmax(50px, auto)`;
             }
 
-            // Create header cell
+            // Create a header cell
             function createHeaderCell(content) {
                 const header = document.createElement('div');
                 header.textContent = content;
-                header.classList.add('header');
+                header.classList.add('timetable-header');
                 return header;
             }
 
-            // Create time cell
+            // Create a time column cell
             function createTimeCell(content) {
                 const timeColumn = document.createElement('div');
                 timeColumn.textContent = content;
-                timeColumn.classList.add('time-column');
+                timeColumn.classList.add('timetable-time-column');
                 return timeColumn;
             }
 
             // Handle form submission
             submitButton.addEventListener('click', () => {
+                // Convert the selected roles into a structured format
                 const preferences = selectedRoles.map(entry => {
                     const [day, time, role] = entry.split('|');
                     return { day, time, role };
@@ -132,8 +137,9 @@
                 alert('Preferences submitted successfully!');
             });
 
-            // Load roles on page load
+            // Fetch roles and initialize timetable on page load
             fetchRoles();
         </script>
     </body>
 </html>
+
