@@ -10,101 +10,114 @@
         <header>
             <h1>Volunteer Preferences</h1>
         </header>
+    
+        <!-- Volunteer Selection Dropdown -->
+        <h3>Select Volunteer:</h3>
+        <select id="volunteerSelect">
+            <!-- Options will be populated dynamically -->
+        </select>
+    
         <h3>Select Your Roles and Availability</h3>
-
+        <h4>Click on the cells to select which times you are available to work</h4>
+    
+        <!-- Schedule Grid -->
         <div class="schedule" id="schedule"></div>
+    
+        <!-- Role Selection -->
+        <h3>Select Roles:</h3>
+        <div id="roleList" class="role-list"></div>
+    
+        <!-- Submit Button -->
         <button id="submit" class="timetable-submit-btn">Submit Preferences</button>
-
+    
         <script>
             const scheduleContainer = document.getElementById('schedule');
+            const roleListContainer = document.getElementById('roleList');
             const submitButton = document.getElementById('submit');
-
+            const volunteerSelect = document.getElementById('volunteerSelect');
+    
             // Store selected preferences
             let selectedRoles = [];
-
-            // Days and roles
+            let selectedTimes = {};
+    
+            // Days of the week
             const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-            let roles = []; // Roles will be fetched dynamically from a CSV file
-            const startHour = 8; // Default start time
-            const endHour = 18; // Default end time
-
-            // Fetch roles from roles.csv
-            async function fetchRoles() {
-                try {
-                    const response = await fetch('roles.csv');
-                    if (!response.ok) {
-                        throw new Error(`Error fetching roles.csv: ${response.statusText}`);
-                    }
-
-                    const text = await response.text();
-                    roles = text.split(/\r?\n/).map(line => line.trim()).filter(line => line);
-
-                    if (roles.length === 0) {
-                        throw new Error('roles.csv is empty or invalid.');
-                    }
-
-                    generateSchedule();
-                } catch (error) {
-                    scheduleContainer.innerHTML = `<p style="text-align: center; color: red;">${error.message}</p>`;
-                    console.error(error.message);
-                }
+    
+            // Load scheduleData from localStorage
+            const scheduleData = JSON.parse(localStorage.getItem('scheduleData')) || { startHour: 8, endHour: 16 };
+            const { startHour, endHour } = scheduleData;
+    
+            // Load roles from localStorage
+            const roles = JSON.parse(localStorage.getItem('roles')) || [];
+    
+            // Load volunteers from localStorage
+            const volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
+    
+            // Load volunteers into the selection dropdown
+            function loadVolunteers() {
+                volunteerSelect.innerHTML = ''; // Clear existing options
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = 'Select Volunteer';
+                volunteerSelect.appendChild(defaultOption);
+    
+                // Add each volunteer as an option
+                volunteers.forEach(volunteer => {
+                    const option = document.createElement('option');
+                    option.value = volunteer.name;
+                    option.textContent = volunteer.name;
+                    volunteerSelect.appendChild(option);
+                });
             }
-
-            // Generate the schedule
+    
+            // Generate the schedule grid
             function generateSchedule() {
                 scheduleContainer.innerHTML = ''; // Clear the container
-                selectedRoles = []; // Reset selections
-
+                selectedTimes = {}; // Reset selected times
+    
                 // Generate headers
                 scheduleContainer.appendChild(createHeaderCell("TIME/DAY"));
                 days.forEach(day => scheduleContainer.appendChild(createHeaderCell(day)));
-
+    
                 // Generate time slots
                 for (let hour = startHour; hour < endHour; hour++) {
                     const currentHour = `${String(hour).padStart(2, '0')}:00`;
                     const nextHour = `${String((hour + 1) % 24).padStart(2, '0')}:00`;
-
+    
                     // Add time column
                     scheduleContainer.appendChild(createTimeCell(`${currentHour}-${nextHour}`));
-
+    
                     // Add cells for each day
                     days.forEach(day => {
                         const cell = document.createElement('div');
                         cell.classList.add('schedule-cell');
-
-                        // Add roles within the cell
-                        roles.forEach(role => {
-                            const roleElement = document.createElement('span');
-                            roleElement.textContent = role;
-                            roleElement.classList.add('role-item');
-                            roleElement.dataset.day = day;
-                            roleElement.dataset.time = `${currentHour}-${nextHour}`;
-                            roleElement.dataset.role = role;
-
-                            // Toggle selection
-                            roleElement.addEventListener('click', () => {
-                                const roleKey = `${roleElement.dataset.day}|${roleElement.dataset.time}|${roleElement.dataset.role}`;
-                                if (roleElement.classList.contains('selected')) {
-                                    roleElement.classList.remove('selected');
-                                    selectedRoles = selectedRoles.filter(r => r !== roleKey);
-                                } else {
-                                    roleElement.classList.add('selected');
-                                    selectedRoles.push(roleKey);
-                                }
-                            });
-
-                            cell.appendChild(roleElement);
-                        });
-
+                        cell.dataset.day = day;
+                        cell.dataset.time = `${currentHour}-${nextHour}`;
+    
+                        // Toggle selection on click
+                        cell.addEventListener('click', () => toggleAvailability(cell));
+    
                         scheduleContainer.appendChild(cell);
                     });
                 }
-
+    
                 // Apply grid styling
                 scheduleContainer.style.gridTemplateColumns = `repeat(${days.length + 1}, 1fr)`; // +1 for time column
                 scheduleContainer.style.gridAutoRows = 'minmax(50px, auto)';
             }
-
+    
+            // Toggle availability for a cell
+            function toggleAvailability(cell) {
+                const key = `${cell.dataset.day}|${cell.dataset.time}`;
+                if (cell.classList.contains('selected')) {
+                    cell.classList.remove('selected');
+                    delete selectedTimes[key];
+                } else {
+                    cell.classList.add('selected');
+                    selectedTimes[key] = true;
+                }
+            }
+    
             // Create header cell
             function createHeaderCell(content) {
                 const header = document.createElement('div');
@@ -112,7 +125,7 @@
                 header.classList.add('header');
                 return header;
             }
-
+    
             // Create time cell
             function createTimeCell(content) {
                 const timeColumn = document.createElement('div');
@@ -120,20 +133,81 @@
                 timeColumn.classList.add('time-column');
                 return timeColumn;
             }
-
-            // Handle form submission
-            submitButton.addEventListener('click', () => {
-                const preferences = selectedRoles.map(entry => {
-                    const [day, time, role] = entry.split('|');
-                    return { day, time, role };
+    
+            // Generate the list of roles
+            function generateRoleList() {
+                roleListContainer.innerHTML = ''; // Clear previous roles
+    
+                // Process the roles array
+                roles.forEach(roleObj => {
+                    const role = roleObj.Role; // Extract the Role from the object
+    
+                    const roleItem = document.createElement('div');
+                    roleItem.textContent = role;
+                    roleItem.classList.add('role-item');
+                    roleItem.dataset.role = role;
+    
+                    // Toggle role selection
+                    roleItem.addEventListener('click', () => toggleRoleSelection(roleItem));
+    
+                    roleListContainer.appendChild(roleItem);
                 });
+            }
+    
+            // Toggle role selection
+            function toggleRoleSelection(roleItem) {
+                if (roleItem.classList.contains('selected')) {
+                    roleItem.classList.remove('selected');
+                    selectedRoles = selectedRoles.filter(role => role !== roleItem.dataset.role);
+                } else {
+                    roleItem.classList.add('selected');
+                    selectedRoles.push(roleItem.dataset.role);
+                }
+            }
+    
+            // Handle form submission
+            // Handle form submission
+submitButton.addEventListener('click', () => {
+    const selectedVolunteerName = volunteerSelect.value;
+    if (!selectedVolunteerName) {
+        alert('Please select a volunteer!');
+        return;
+    }
 
-                console.log('Submitted Preferences:', preferences);
-                alert('Preferences submitted successfully!');
-            });
+    // Find the selected volunteer in localStorage
+    const volunteerIndex = volunteers.findIndex(v => v.name === selectedVolunteerName);
+    if (volunteerIndex === -1) {
+        alert('Selected volunteer not found in storage!');
+        return;
+    }
 
-            // Load roles on page load
-            fetchRoles();
+    // Update the volunteer's time and roles
+    const selectedVolunteer = volunteers[volunteerIndex];
+
+    // Generate the preferences array for time as a list of strings
+    const preferences = Object.keys(selectedTimes).map(key => {
+        const [day, time] = key.split('|');
+        return `${day} ${time}`; // Combine day and time into a string
+    });
+
+    // Update the 'time' field: an array of strings
+    selectedVolunteer.time = preferences; // Array of strings with combined day and time
+
+    // Update the 'roles' field (as a string, you can customize how you want to save roles)
+    selectedVolunteer.roles = selectedRoles.join(', '); // Store selected roles as a comma-separated string
+
+    // Save the updated volunteers list back to localStorage
+    localStorage.setItem('volunteers', JSON.stringify(volunteers));
+
+    alert('Preferences updated successfully for ' + selectedVolunteer.name);
+});
+
+    
+            // Initialize the page
+            loadVolunteers();
+            generateSchedule();
+            generateRoleList();
         </script>
+        <a href="VolunteerHome.html"><button name="BackToVolunteer" type="button">Cancel</button></a>
     </body>
 </html>

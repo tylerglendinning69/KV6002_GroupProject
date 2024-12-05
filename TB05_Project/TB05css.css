@@ -239,7 +239,7 @@ label {
 
 .container {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr; /* Four columns: Name, Time, Role, Email */
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* Four columns: Name, Time, Role, Email */
     gap: 10px;
     align-items: center;
 }
@@ -309,4 +309,29 @@ a {
     margin: 5px 0;
     font-size: 14px;
     color: #555;
+}
+
+.volunteer-table {
+    width: 80%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    text-align: center;
+}
+.volunteer-table th, .volunteer-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+}
+.volunteer-table th {
+    background-color: blueviolet;
+    color: white;
+}
+.volunteer-table td {
+    background-color: #f9f9f9;
+}
+
+.schedule-cell.selected {
+    background-color: #90caf9; /* Light blue for selection */
+    color: #fff;
+    border: 2px solid #005f4b; /* Darker border for emphasis */
 }

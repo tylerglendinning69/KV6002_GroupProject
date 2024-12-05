@@ -9,16 +9,85 @@
     <body>
         <h1>Volunteering Solutions</h1>
         <h2>Add Volunteer</h2>
-        <form action="MVolunteerManagement.html">
-            <label>Name</label>
-            <input type="text" name="name" required><br><br>
-            <label>Time</label>
-            <input type="text" name="time" required><br><br>
-            <label>Role</label>
-            <input type="text" name="role" required><br><br>
-            <label>Email</label>
-            <input type="text" name="email" required><br><br>
-            <a href="MVolunteerManagement.html"><input type="submit" value="Submit"></a>
+        <form id="addVolunteerForm">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter volunteer's name" required>
+            
+            <label for="time">Time</label>
+            <input type="text" id="time" name="time" placeholder="Enter time (e.g., 10:00 AM)" required>
+            
+            <label for="roles">Roles</label>
+            <div id="rolesContainer" class="role-container">
+                <!-- Roles will be dynamically populated here -->
+            </div>
+            
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Enter volunteer's email" required>
+            
+            <input type="submit" value="Submit">
         </form>
+    
+        <script>
+            // Load roles from localStorage
+            function loadRoles() {
+                const rolesContainer = document.getElementById("rolesContainer");
+                const roles = JSON.parse(localStorage.getItem("roles")) || [];
+                
+                // Dynamically add checkboxes for roles
+                roles.forEach(role => {
+                    const div = document.createElement("div");
+                    div.className = "role-item";
+                    
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.id = `role-${role.Role}`;
+                    checkbox.name = "roles";
+                    checkbox.value = role.Role;
+                    
+                    const label = document.createElement("label");
+                    label.htmlFor = `role-${role.Role}`;
+                    label.textContent = role.Role;
+                    
+                    div.appendChild(checkbox);
+                    div.appendChild(label);
+                    rolesContainer.appendChild(div);
+                });
+            }
+    
+            // Save volunteer to localStorage on form submission
+            document.getElementById("addVolunteerForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+                
+                const name = document.getElementById("name").value;
+                const time = document.getElementById("time").value;
+                const email = document.getElementById("email").value;
+                
+                // Get selected roles
+                const selectedRoles = Array.from(document.querySelectorAll('input[name="roles"]:checked'))
+                                           .map(checkbox => checkbox.value);
+                
+                // Get existing volunteers from localStorage
+                const volunteers = JSON.parse(localStorage.getItem("volunteers")) || [];
+                
+                // Add new volunteer
+                const newVolunteer = {
+                    name: name,
+                    time: time,
+                    roles: selectedRoles,
+                    email: email
+                };
+                volunteers.push(newVolunteer);
+                
+                // Save back to localStorage
+                localStorage.setItem("volunteers", JSON.stringify(volunteers));
+                
+                alert("Volunteer added successfully!");
+                window.location.href = "MVolunteerManagement.html"; // Redirect back to management page
+            });
+    
+            // Initialize the roles on page load
+            loadRoles();
+        </script>
+        <a href="MVolunteerManagement.html"><button name="BackToVolunteer" type="button">Cancel</button></a>
     </body>
 </html>
