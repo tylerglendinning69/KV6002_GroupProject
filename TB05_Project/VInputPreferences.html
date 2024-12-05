@@ -103,7 +103,7 @@
     
                 // Apply grid styling
                 scheduleContainer.style.gridTemplateColumns = `repeat(${days.length + 1}, 1fr)`; // +1 for time column
-                scheduleContainer.style.gridAutoRows = 'minmax(50px, auto)';
+                scheduleContainer.style.gridAutoRows = `minmax(50px, auto)`;
             }
     
             // Toggle availability for a cell
@@ -122,7 +122,7 @@
             function createHeaderCell(content) {
                 const header = document.createElement('div');
                 header.textContent = content;
-                header.classList.add('header');
+                header.classList.add('timetable-header');
                 return header;
             }
     
@@ -130,7 +130,7 @@
             function createTimeCell(content) {
                 const timeColumn = document.createElement('div');
                 timeColumn.textContent = content;
-                timeColumn.classList.add('time-column');
+                timeColumn.classList.add('timetable-time-column');
                 return timeColumn;
             }
     
@@ -211,3 +211,4 @@ submitButton.addEventListener('click', () => {
         <a href="VolunteerHome.html"><button name="BackToVolunteer" type="button">Cancel</button></a>
     </body>
 </html>
+
