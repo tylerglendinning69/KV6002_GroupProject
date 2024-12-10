@@ -208,7 +208,7 @@ label {
 .time-column {
     background-color: #8663bc;
     font-weight: bold;
-    border: 1px solid #fff;
+    border: 1px solid #1c1d21;
 }
 
 .schedule-row {
@@ -258,6 +258,7 @@ label {
     font-weight: bold;
     background-color: #8663ac;
     color: #fff;
+    border: 1px solid #1c1d21;
 }
 
 
@@ -336,6 +337,7 @@ a {
     flex: 1; 
     display: grid;
     grid-template-columns: 80% 20%;
+    margin-top: 10px;
 }
 
 .logoHeading{
@@ -427,6 +429,12 @@ a {
     font-weight: 700;
     margin: 10px;
     font-size: larger;
+}
+
+.role-container .header{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
 }
 
 /*Add Shift*/
