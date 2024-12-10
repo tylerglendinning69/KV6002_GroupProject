@@ -51,7 +51,7 @@ input {
     }
 /* ******************************************************* */
 
-/*Volunteer Input Form*/
+/*-table Input Form*/
 
 /* General Body Styling */
 .timetable-container {
@@ -539,6 +539,106 @@ a {
 .editShiftContainer .extraBtns2{
     background-color: #8663ac;
 }
+
+/*Volunteer Management*/
+
+.VMcontainer{
+    margin-left: 20px;
+    display: flex;
+    margin-bottom: 40px;
+    background-color: #1c1d21;
+    border-radius: 10px;
+}
+
+.volunteer-table{
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 15px;
+}
+
+.vmHeader{
+    
+    color: white;
+    border-right: 1px solid white ;
+    border-bottom: 1px solid white ;
+    background-color: #8663ac;
+    padding: 10px;
+}
+
+.vmHeader1{
+    width: 30%;
+}
+
+.vmHeader2{
+    width: 15%;
+}
+
+.vmBody{
+    
+    color: white;
+    border-right: 1px solid white;
+    text-align: center;
+    padding: 10px;
+}
+
+.VMcontainer .extraBtns{
+    margin-left: 5px;
+}
+
+.VM .btnMargin{
+    margin-left: 25px;
+}
+
+
+/*Volunteer Management*/
+
+.VMcontainer{
+    margin-left: 20px;
+    display: flex;
+    margin-bottom: 40px;
+    background-color: #1c1d21;
+    border-radius: 10px;
+}
+
+.volunteer-table{
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 15px;
+}
+
+.vmHeader{
+    
+    color: white;
+    border-right: 1px solid white ;
+    border-bottom: 1px solid white ;
+    background-color: #8663ac;
+    padding: 10px;
+}
+
+.vmHeader1{
+    width: 30%;
+}
+
+.vmHeader2{
+    width: 15%;
+}
+
+.vmBody{
+    
+    color: white;
+    border-right: 1px solid white;
+    text-align: center;
+    padding: 10px;
+}
+
+.VMcontainer .extraBtns{
+    margin-left: 5px;
+}
+
+.VM .btnMargin{
+    margin-left: 25px;
+}
+
 
 .gamification-container {
     text-align: center;
