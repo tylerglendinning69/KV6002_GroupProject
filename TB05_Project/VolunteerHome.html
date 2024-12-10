@@ -20,7 +20,15 @@
                 <div class="schedule" id="schedule"></div>
             </div>
             <div>
-                <p>Gamification</p>
+                <h2>Current Badge Level</h2>
+                <div class="gamification-container">
+                    <img id="gamificationImage" src="BadgeLvl1_background.jpeg" alt="Gamification Image" style="max-width: 100%; height: auto;">
+                    <div class="image-buttons">
+                        <button onclick="changeImage('BadgeLvl1_background.jpeg')">Level 1 (Default)</button>
+                        <button onclick="changeImage('BadgeLvl2_background.jpeg')">Level 2</button>
+                        <button onclick="changeImage('BadgeLvl3_background.jpeg')">Level 3</button>
+                    </div>
+                </div>
             </div>
         </div>
         <script>
@@ -101,6 +109,11 @@
                         });
                     }
                 });
+            }
+
+            function changeImage(imageSrc) {
+                const gamificationImage = document.getElementById('gamificationImage');
+                gamificationImage.src = imageSrc;
             }
         
             document.addEventListener('DOMContentLoaded', loadSchedule);
