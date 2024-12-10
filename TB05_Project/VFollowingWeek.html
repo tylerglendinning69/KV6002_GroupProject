@@ -1,16 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <link href="TB05css.css" rel="stylesheet">
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Following Week</title>
-    </head>
+<head>
+    <link href="TB05css.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Following Week</title>
+</head>
+<body>
     <header>
         <h1>Volunteering Solutions</h1>
     </header>
-    <body>
-        <p>This is where the volunteers will be able to view the following weeks schedule.</p>
-        <a href="VAcceptDeclineShift.html"><button name="VAcceptDeclineShift" type="button">Accept or Decline Shift</button></a>
-    </body>
-    </html>
+
+    <p>This is where the volunteers will be able to view the following week's schedule.</p>
+
+    <!-- Schedule container -->
+    <div id="schedule"></div>
+
+    <!-- Navigation buttons -->
+    <a href="VAcceptDeclineShift.html"><button name="VAcceptDeclineShift" type="button">Accept or Decline Shift</button></a>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Retrieve data from localStorage
+            const shifts = JSON.parse(localStorage.getItem('shifts')) || [];
+            const volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
+        
+            // Generate the schedule
+            const schedule = generateSchedule(shifts, volunteers);
+        
+            // Display the schedule in a table
+            displaySchedule(schedule);
+        });
+        
+        function generateSchedule(shifts, volunteers) {
+            const schedule = [];
+        
+            // Sort volunteers alphabetically by name
+            volunteers.sort((a, b) => a.name.localeCompare(b.name));
+        
+            // Iterate over each shift to assign volunteers
+            shifts.forEach(shift => {
+                const { day, time, roles } = shift;
+        
+                roles.forEach(role => {
+                    // Find the first eligible volunteer
+                    const eligibleVolunteer = volunteers.find(volunteer => {
+                        return (
+                            volunteer.roles.includes(role) && // Volunteer can perform the role
+                            volunteer.time.includes(`${day} ${time}`) // Volunteer is available
+                        );
+                    });
+        
+                    // If a volunteer is found, assign them to the shift
+                    if (eligibleVolunteer) {
+                        schedule.push({
+                            day,
+                            time,
+                            role,
+                            volunteer: eligibleVolunteer.name
+                        });
+        
+                        // Remove this time slot from the volunteer's availability to prevent double booking
+                        eligibleVolunteer.time = eligibleVolunteer.time.filter(
+                            avail => avail !== `${day} ${time}`
+                        );
+                    } else {
+                        // No volunteer available for this role
+                        schedule.push({
+                            day,
+                            time,
+                            role,
+                            volunteer: 'Unassigned'
+                        });
+                    }
+                });
+            });
+        
+            return schedule;
+        }
+        
+        function displaySchedule(schedule) {
+            const scheduleContainer = document.getElementById('schedule');
+            scheduleContainer.innerHTML = '';
+        
+            // Create a table to display the schedule
+            const table = document.createElement('table');
+            const headerRow = document.createElement('tr');
+        
+            // Add table headers
+            ['Day', 'Time', 'Role', 'Volunteer'].forEach(headerText => {
+                const header = document.createElement('th');
+                header.textContent = headerText;
+                headerRow.appendChild(header);
+            });
+        
+            table.appendChild(headerRow);
+        
+            // Add schedule rows
+            schedule.forEach(entry => {
+                const row = document.createElement('tr');
+        
+                ['day', 'time', 'role', 'volunteer'].forEach(key => {
+                    const cell = document.createElement('td');
+                    cell.textContent = entry[key];
+                    row.appendChild(cell);
+                });
+        
+                table.appendChild(row);
+            });
+        
+            scheduleContainer.appendChild(table);
+        }
+    </script>
+
+</body>
+</html>

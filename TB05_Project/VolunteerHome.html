@@ -12,6 +12,7 @@
     <body>
         <button name="ScheduleButton" type="button">Schedule</button>
         <a href="VInputPreferences.html"><button name="VInputPreferences" type="button">Availability</button></a>
+        <a href="VFollowingWeek.html"><button name="VFollowingWeek" type="button">Next Week</button></a>
         <h3>Schedule</h3>
         
         <div class="schedule" id="schedule"></div>
@@ -20,23 +21,16 @@
         
             // Load schedule from localStorage or set default
             function loadSchedule() {
-                // Default schedule data
                 const defaultSchedule = { startHour: 8, endHour: 18 };
-        
-                // Get schedule data from localStorage
                 const scheduleData = JSON.parse(localStorage.getItem('scheduleData')) || defaultSchedule;
         
-                // Generate the schedule
                 generateSchedule(scheduleData.startHour, scheduleData.endHour);
-
-                displayShifts();
+                assignVolunteersToShifts();
             }
         
             function generateSchedule(startHour, endHour) {
-                // Clear existing schedule
                 scheduleContainer.innerHTML = '';
         
-                // Generate headers
                 const days = ["TIME/DAY", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
                 days.forEach(day => {
                     const header = document.createElement('div');
@@ -45,68 +39,64 @@
                     scheduleContainer.appendChild(header);
                 });
         
-                // Generate rows
                 for (let hour = startHour; hour < endHour; hour++) {
-                    const currentHour = hour === 24 ? '00:00' : `${String(hour).padStart(2, '0')}:00`;
-                    const nextHour = hour + 1 === 24 ? '00:00' : `${String((hour + 1) % 24).padStart(2, '0')}:00`;
+                    const currentHour = `${String(hour).padStart(2, '0')}:00`;
+                    const nextHour = `${String((hour + 1) % 24).padStart(2, '0')}:00`;
         
-                    // Add time column
                     const timeColumn = document.createElement('div');
                     timeColumn.textContent = `${currentHour}-${nextHour}`;
                     timeColumn.classList.add('time-column');
                     scheduleContainer.appendChild(timeColumn);
         
-                    // Add cells for each day
                     for (let dayIndex = 1; dayIndex < days.length; dayIndex++) {
                         const dayName = days[dayIndex];
-
                         const cell = document.createElement('div');
                         cell.classList.add('schedule-cell');
-                        cell.dataset.time = `${currentHour}-${nextHour}`; // Add time attribute
-                        cell.dataset.day = dayName; // Add day attribute
+                        cell.dataset.time = `${currentHour}-${nextHour}`;
+                        cell.dataset.day = dayName;
                         scheduleContainer.appendChild(cell);
                     }
                 }
         
-                // Apply CSS grid
                 scheduleContainer.style.gridTemplateColumns = `repeat(${days.length}, 1fr)`;
                 scheduleContainer.style.gridAutoRows = `minmax(40px, auto)`;
             }
         
-            function displayShifts() {
+            function assignVolunteersToShifts() {
                 const shifts = JSON.parse(localStorage.getItem('shifts')) || [];
-
+                const volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
+        
                 shifts.forEach(shift => {
                     const { day, time, roles } = shift;
-                    const [startTime, endTime] = time.split('-');  // Split the time range into start and end
-
-                    const startHour = parseInt(startTime.split(':')[0], 10);  // Extract the start hour
-                    const endHour = parseInt(endTime.split(':')[0], 10);  // Extract the end hour
-
-                    // Loop through each hour in the range
+        
+                    // Find suitable volunteers for the shift
+                    const assignedVolunteers = volunteers.filter(volunteer =>
+                        volunteer.availability.some(avail => avail.day === day && avail.time === time) &&
+                        roles.some(role => volunteer.preferredRoles.includes(role))
+                    );
+        
+                    const [startHour, endHour] = time.split('-').map(t => parseInt(t.split(':')[0], 10));
+        
                     for (let hour = startHour; hour < endHour; hour++) {
                         const currentTime = `${String(hour).padStart(2, '0')}:00-${String(hour + 1).padStart(2, '0')}:00`;
-
-                        // Find all cells matching the shift's day and the current hour
+        
                         const cells = Array.from(scheduleContainer.querySelectorAll('.schedule-cell')).filter(cell => {
                             return cell.dataset.day === day && cell.dataset.time === currentTime;
                         });
-
-                        // Update each matching cell with the shift information
+        
                         cells.forEach(cell => {
-                            cell.style.backgroundColor = "#ADD8E6"; // Light blue color to represent the shift
+                            cell.style.backgroundColor = "#ADD8E6";
                             cell.style.color = "black";
                             cell.style.textAlign = "center";
-
-                            // Add roles as content in the cell
-                            cell.innerHTML = `<div>${roles.join(", ")}</div>`;
+        
+                            const volunteerNames = assignedVolunteers.map(v => v.name).join(", ");
+                            cell.innerHTML = `<div><strong>Roles:</strong> ${roles.join(", ")}<br><strong>Volunteers:</strong> ${volunteerNames}</div>`;
                         });
                     }
                 });
             }
-
-            // Load the schedule on page load
+        
             document.addEventListener('DOMContentLoaded', loadSchedule);
-        </script>
+        </script>        
     </body>
 </html>
