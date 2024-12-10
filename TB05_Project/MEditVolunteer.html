@@ -9,16 +9,101 @@
     <body>
         <h1>Volunteering Solutions</h1>
         <h2>Edit Volunteer</h2>
-        <form action="MVolunteerManagement.html">
-            <label>Name</label>
-            <input type="text" name="name" required><br><br>
-            <label>Time</label>
-            <input type="text" name="time" required><br><br>
-            <label>Role</label>
-            <input type="text" name="role" required><br><br>
-            <label>Email</label>
-            <input type="text" name="email" required><br><br>
-            <a href="MVolunteerManagement.html"><input type="submit" value="Submit"></a>
+        
+        <!-- Volunteer Selection Dropdown -->
+        <div class="select-volunteer">
+            <label for="volunteerSelect">Select Volunteer to Edit</label>
+            <select id="volunteerSelect">
+                <option value="">-- Select Volunteer --</option>
+            </select>
+        </div>
+    
+        <form id="editVolunteerForm">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter volunteer's name" required>
+            
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Enter volunteer's email" required>
+            
+            <div class="preferences">
+                <button type="button" id="editPreferencesButton">Edit Time and Roles</button>
+            </div>
+            
+            <input type="submit" value="Save Changes">
         </form>
+    
+        <script>
+            // Load volunteers from localStorage
+            function loadVolunteers() {
+                const volunteerSelect = document.getElementById("volunteerSelect");
+                const volunteers = JSON.parse(localStorage.getItem("volunteers")) || [];
+    
+                // Populate the select dropdown with volunteers' names
+                volunteers.forEach((volunteer, index) => {
+                    const option = document.createElement("option");
+                    option.value = index;
+                    option.textContent = volunteer.name;
+                    volunteerSelect.appendChild(option);
+                });
+            }
+    
+            // Prepopulate the form with selected volunteer's data
+            function prepopulateForm(volunteerIndex) {
+                const volunteers = JSON.parse(localStorage.getItem("volunteers")) || [];
+                const volunteer = volunteers[volunteerIndex];
+    
+                // Fill in the form fields with volunteer data
+                document.getElementById("name").value = volunteer.name;
+                document.getElementById("email").value = volunteer.email;
+
+                // Save the selected volunteer index for redirecting
+                localStorage.setItem("selectedVolunteerIndex", volunteerIndex);
+            }
+    
+            // Save updated volunteer data
+            document.getElementById("editVolunteerForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+                
+                const volunteerIndex = document.getElementById("volunteerSelect").value;
+                const name = document.getElementById("name").value;
+                const email = document.getElementById("email").value;
+
+                // Get existing volunteers from localStorage
+                const volunteers = JSON.parse(localStorage.getItem("volunteers")) || [];
+                
+                // Update selected volunteer
+                volunteers[volunteerIndex].name = name;
+                volunteers[volunteerIndex].email = email;
+                
+                // Save back to localStorage
+                localStorage.setItem("volunteers", JSON.stringify(volunteers));
+                
+                alert("Volunteer updated successfully!");
+                window.location.href = "MVolunteerManagement.html"; // Redirect back to management page
+            });
+    
+            // Event listener for volunteer selection change
+            document.getElementById("volunteerSelect").addEventListener("change", function() {
+                const volunteerIndex = this.value;
+                if (volunteerIndex) {
+                    prepopulateForm(volunteerIndex);
+                }
+            });
+
+            // Redirect to VInputPreferences.html when clicking the Edit Preferences button
+            document.getElementById("editPreferencesButton").addEventListener("click", function() {
+                const volunteerIndex = document.getElementById("volunteerSelect").value;
+                if (volunteerIndex) {
+                    window.location.href = "MInputPreferences.html";
+                } else {
+                    alert("Please select a volunteer first!");
+                }
+            });
+    
+            // Initialize the page
+            loadVolunteers();
+        </script>
+        
+        <a href="MVolunteerManagement.html"><button name="BackToVolunteer" type="button">Cancel</button></a>
     </body>
 </html>

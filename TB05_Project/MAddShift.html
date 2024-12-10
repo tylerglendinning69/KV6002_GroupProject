@@ -93,6 +93,26 @@
                 });
             }
 
+            // Check for overlapping shifts
+            function hasOverlap(newShift) {
+                const newStartTime = parseInt(newShift.time.split('-')[0].replace(':', ''), 10);
+                const newEndTime = parseInt(newShift.time.split('-')[1].replace(':', ''), 10);
+
+                return shifts.some(existingShift => {
+                    if (existingShift.day !== newShift.day) return false;
+
+                    const existingStartTime = parseInt(existingShift.time.split('-')[0].replace(':', ''), 10);
+                    const existingEndTime = parseInt(existingShift.time.split('-')[1].replace(':', ''), 10);
+
+                    // Check for overlap
+                    return (
+                        (newStartTime >= existingStartTime && newStartTime < existingEndTime) ||
+                        (newEndTime > existingStartTime && newEndTime <= existingEndTime) ||
+                        (newStartTime <= existingStartTime && newEndTime >= existingEndTime)
+                    );
+                });
+            }
+
             // Save the shift
             function saveShift() {
                 const selectedDay = daySelect.value;
@@ -128,6 +148,11 @@
                     time: `${startTime}-${endTime}`,
                     roles: selectedRoles
                 };
+
+                if (hasOverlap(shift)) {
+                    alert("An existing shift overlaps with this time. Please remove or modify the existing shift first.");
+                    return;
+                }
 
                 shifts.push(shift);
                 localStorage.setItem('shifts', JSON.stringify(shifts));

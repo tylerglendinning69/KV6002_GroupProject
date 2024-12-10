@@ -8,75 +8,108 @@
     </head>
     <body>
         <h1>Volunteer Management</h1>
-        <div class="main-container">
-            <!-- Table Section -->
-            <div class="table-container">
-                <div class="container">
-                    <!-- Headers -->
-                    <div class="header">Name</div>
-                    <div class="header">Time</div>
-                    <div class="header">Role</div>
-                    <div class="header">Email</div>
-                    <div class="header">Remove</div>
-                </div>
-            </div>
-            <!-- Button Section -->
-            <div class="button-container">
-                <a href="MAddVolunteer.html">
-                    <button name="AddVolunteer" type="button">Add Volunteer</button>
-                </a>
-                <a href="MEditVolunteer.html">
-                    <button name="EditVolunteer" type="button">Edit Volunteer</button>
-                </a>
+    
+        <div class="container">
+            <!-- Table to display the volunteers -->
+            <table class="volunteer-table" id="volunteerTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Time</th>
+                        <th>Roles</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="volunteerTableBody">
+                    <!-- Volunteers will be dynamically populated here -->
+                </tbody>
+            </table>
+    
+            <!-- Buttons to add and edit volunteers -->
+            <div>
+                <button onclick="window.location.href = 'MAddVolunteer.html'">Add Volunteer</button>
             </div>
         </div>
+    
         <script>
-            // Example data
-            const data = [
-                { name: "Tyler", time: "10:00 AM", role: "Cashier", email: "emailexample@gmail.com" },
-                { name: "Ellie", time: "11:30 AM", role: "Cashier", email: "emailexample@gmail.com" },
-                { name: "Kush", time: "1:00 PM", role: "Stock", email: "emailexample@gmail.com" },
-                { name: "Joe", time: "1:00 PM", role: "Stock", email: "emailexample@gmail.com" },
-            ];
-
-            // Container to append data
-            const container = document.querySelector('.container');
-
-            // Populate the grid dynamically
-            data.forEach(item => {
-                const nameDiv = document.createElement('div');
-                const timeDiv = document.createElement('div');
-                const roleDiv = document.createElement('div');
-                const emailDiv = document.createElement('div');
-                const removeVolunteerDiv = document.createElement('div');
-
-                nameDiv.textContent = item.name;
-                timeDiv.textContent = item.time;
-                roleDiv.textContent = item.role;
-                emailDiv.textContent = item.email;
-
-                // Create remove volunteer button
-                const removeVolunteerButton = document.createElement('button');
-                removeVolunteerButton.textContent = 'Remove';
-                removeVolunteerButton.onclick = () => {
-                    if (confirm(`Are you sure you want to remove ${item.name}?`)) {
-
-                        container.removeChild(nameDiv);
-                        container.removeChild(timeDiv);
-                        container.removeChild(roleDiv);
-                        container.removeChild(emailDiv);
-                        container.removeChild(removeVolunteerDiv);
-                    }
-                };
-
-                removeVolunteerDiv.appendChild(removeVolunteerButton);
-
-                container.appendChild(nameDiv);
-                container.appendChild(timeDiv);
-                container.appendChild(roleDiv);
-                container.appendChild(emailDiv);
-                container.appendChild(removeVolunteerDiv)
-            });
+            // Function to load and render volunteers from localStorage
+            function loadVolunteers() {
+                const volunteers = JSON.parse(localStorage.getItem("volunteers")) || [];
+                const volunteerTableBody = document.getElementById("volunteerTableBody");
+    
+                // Clear the table before populating it
+                volunteerTableBody.innerHTML = '';
+    
+                // Populate the table with volunteers data
+                volunteers.forEach((volunteer, index) => {
+                    const row = document.createElement("tr");
+    
+                    // Create table cells for each volunteer's data
+                    const nameCell = document.createElement("td");
+                    nameCell.textContent = volunteer.name;
+    
+                    const timeCell = document.createElement("td");
+                    timeCell.textContent = volunteer.time;
+    
+                    const rolesCell = document.createElement("td");
+                    rolesCell.textContent = volunteer.roles;  // Display roles as a comma-separated string
+    
+                    const emailCell = document.createElement("td");
+                    emailCell.textContent = volunteer.email;
+    
+                    const actionsCell = document.createElement("td");
+    
+                    // Add Edit and Remove buttons
+                    const editButton = document.createElement("button");
+                    editButton.textContent = "Edit";
+                    editButton.onclick = () => editVolunteer(index);
+    
+                    const removeButton = document.createElement("button");
+                    removeButton.textContent = "Remove";
+                    removeButton.onclick = () => removeVolunteer(index);
+    
+                    actionsCell.appendChild(editButton);
+                    actionsCell.appendChild(removeButton);
+    
+                    // Append the cells to the row
+                    row.appendChild(nameCell);
+                    row.appendChild(timeCell);
+                    row.appendChild(rolesCell);
+                    row.appendChild(emailCell);
+                    row.appendChild(actionsCell);
+    
+                    // Append the row to the table body
+                    volunteerTableBody.appendChild(row);
+                });
+            }
+    
+            // Function to edit a volunteer
+            function editVolunteer(index) {
+                // Redirect to the edit volunteer page, passing the index in the URL
+                window.location.href = `MEditVolunteer.html?index=${index}`;
+            }
+    
+            // Function to remove a volunteer with a confirmation prompt
+            function removeVolunteer(index) {
+                // Ask for confirmation before removing the volunteer
+                const confirmation = confirm("Are you sure you want to remove this volunteer?");
+                
+                if (confirmation) {
+                    // If confirmed, remove the volunteer
+                    const volunteers = JSON.parse(localStorage.getItem("volunteers")) || [];
+                    volunteers.splice(index, 1);  // Remove the volunteer at the given index
+                    localStorage.setItem("volunteers", JSON.stringify(volunteers));  // Save updated list
+                    loadVolunteers();  // Refresh the table to reflect changes
+                } else {
+                    // If cancelled, do nothing
+                    console.log("Removal cancelled.");
+                }
+            }
+    
+            // Call loadVolunteers when the page loads
+            window.onload = loadVolunteers;
         </script>
+        <a href="ManagementHome.html"><button name="BackToShift" type="button">Back To Home</button></a>
     </body>
 </html>

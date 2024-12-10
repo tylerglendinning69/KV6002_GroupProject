@@ -4,12 +4,15 @@
         <link href="TB05css.css" rel="stylesheet">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Home</title>
+        <title>Volunteer Home</title>
     </head>
     <header>
         <h1>Volunteering Solutions</h1>
     </header>
     <body>
+        <button name="ScheduleButton" type="button">Schedule</button>
+        <a href="VInputPreferences.html"><button name="VInputPreferences" type="button">Availability</button></a>
+        <a href="VFollowingWeek.html"><button name="VFollowingWeek" type="button">Next Week</button></a>
         <h3>Schedule</h3>
         
         <div class="schedule" id="schedule"></div>
@@ -18,21 +21,16 @@
         
             // Load schedule from localStorage or set default
             function loadSchedule() {
-                // Default schedule data
                 const defaultSchedule = { startHour: 8, endHour: 18 };
-        
-                // Get schedule data from localStorage
                 const scheduleData = JSON.parse(localStorage.getItem('scheduleData')) || defaultSchedule;
         
-                // Generate the schedule
                 generateSchedule(scheduleData.startHour, scheduleData.endHour);
+                assignVolunteersToShifts();
             }
         
             function generateSchedule(startHour, endHour) {
-                // Clear existing schedule
                 scheduleContainer.innerHTML = '';
         
-                // Generate headers
                 const days = ["TIME/DAY", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
                 days.forEach(day => {
                     const header = document.createElement('div');
@@ -41,36 +39,64 @@
                     scheduleContainer.appendChild(header);
                 });
         
-                // Generate rows
                 for (let hour = startHour; hour < endHour; hour++) {
-                    const currentHour = hour === 24 ? '00:00' : `${String(hour).padStart(2, '0')}:00`;
-                    const nextHour = hour + 1 === 24 ? '00:00' : `${String((hour + 1) % 24).padStart(2, '0')}:00`;
+                    const currentHour = `${String(hour).padStart(2, '0')}:00`;
+                    const nextHour = `${String((hour + 1) % 24).padStart(2, '0')}:00`;
         
-                    // Add time column
                     const timeColumn = document.createElement('div');
                     timeColumn.textContent = `${currentHour}-${nextHour}`;
                     timeColumn.classList.add('time-column');
                     scheduleContainer.appendChild(timeColumn);
         
-                    // Add cells for each day
-                    for (let day = 0; day < 7; day++) {
+                    for (let dayIndex = 1; dayIndex < days.length; dayIndex++) {
+                        const dayName = days[dayIndex];
                         const cell = document.createElement('div');
                         cell.classList.add('schedule-cell');
+                        cell.dataset.time = `${currentHour}-${nextHour}`;
+                        cell.dataset.day = dayName;
                         scheduleContainer.appendChild(cell);
                     }
                 }
         
-                // Apply CSS grid
                 scheduleContainer.style.gridTemplateColumns = `repeat(${days.length}, 1fr)`;
                 scheduleContainer.style.gridAutoRows = `minmax(40px, auto)`;
             }
         
-            // Load the schedule on page load
-            document.addEventListener('DOMContentLoaded', loadSchedule);
-        </script>
-    
+            function assignVolunteersToShifts() {
+                const shifts = JSON.parse(localStorage.getItem('shifts')) || [];
+                const volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
         
-        <a href="VInputPreferences.html"><button name="VInputPreferences" type="button">Input Preferences</button></a>
-        <a href="VFollowingWeek.html"><button name="VFollowingWeek" type="button">View Following Week</button></a>
+                shifts.forEach(shift => {
+                    const { day, time, roles } = shift;
+        
+                    // Find suitable volunteers for the shift
+                    const assignedVolunteers = volunteers.filter(volunteer =>
+                        volunteer.availability.some(avail => avail.day === day && avail.time === time) &&
+                        roles.some(role => volunteer.preferredRoles.includes(role))
+                    );
+        
+                    const [startHour, endHour] = time.split('-').map(t => parseInt(t.split(':')[0], 10));
+        
+                    for (let hour = startHour; hour < endHour; hour++) {
+                        const currentTime = `${String(hour).padStart(2, '0')}:00-${String(hour + 1).padStart(2, '0')}:00`;
+        
+                        const cells = Array.from(scheduleContainer.querySelectorAll('.schedule-cell')).filter(cell => {
+                            return cell.dataset.day === day && cell.dataset.time === currentTime;
+                        });
+        
+                        cells.forEach(cell => {
+                            cell.style.backgroundColor = "#ADD8E6";
+                            cell.style.color = "black";
+                            cell.style.textAlign = "center";
+        
+                            const volunteerNames = assignedVolunteers.map(v => v.name).join(", ");
+                            cell.innerHTML = `<div><strong>Roles:</strong> ${roles.join(", ")}<br><strong>Volunteers:</strong> ${volunteerNames}</div>`;
+                        });
+                    }
+                });
+            }
+        
+            document.addEventListener('DOMContentLoaded', loadSchedule);
+        </script>        
     </body>
 </html>

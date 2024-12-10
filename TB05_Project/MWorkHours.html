@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <link rel="stylesheet" href="TB05css.css">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MWorkHours</title>
-</head>
+    <head>
+        <href="TB05css.css" link rel="stylesheet">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MWorkHours</title>
+    </head>
     <body>
         <h1>Update Schedule</h1>
         <div class="scheduleForm">
@@ -19,52 +19,57 @@
         </div>
         <a href="MShiftManagement.html" ><button class="extraBtns btnMargin workHrsBack">Back to Schedule</button></a>
 
-        <script>
-            const scheduleForm = document.getElementById('scheduleForm');
+    <script>
+        const scheduleForm = document.getElementById('scheduleForm');
 
-            // Load existing schedule data into the form
-            function loadFormData() 
-            {
-                const scheduleData = JSON.parse(localStorage.getItem('scheduleData')) || 
-                {
-                    startHour: 8,
-                    endHour: 18,
-                };
-                document.getElementById('startHour').value = scheduleData.startHour;
-                document.getElementById('endHour').value = scheduleData.endHour;
+        // Load existing schedule data into the form
+        function loadFormData() {
+            const scheduleData = JSON.parse(localStorage.getItem('scheduleData')) || {
+                startHour: 8,
+                endHour: 18,
+            };
+            document.getElementById('startHour').value = scheduleData.startHour;
+            document.getElementById('endHour').value = scheduleData.endHour;
+        }
+
+        // Save the new schedule to localStorage
+        scheduleForm.addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent form submission
+            const startHour = parseInt(document.getElementById('startHour').value, 10);
+            const endHour = parseInt(document.getElementById('endHour').value, 10);
+
+            if (startHour >= endHour) {
+                alert('Start Hour must be less than End Hour.');
+                return;
             }
 
-            // Save the new schedule to localStorage
-            scheduleForm.addEventListener('submit', function (e) 
-            {
-                e.preventDefault(); // Prevent form submission
-                const startHour = parseInt(document.getElementById('startHour').value, 10);
-                const endHour = parseInt(document.getElementById('endHour').value, 10);
+            // Show a confirmation dialog before proceeding
+            const confirmChange = window.confirm('Are you sure you want to update the schedule? This will delete all current shifts and volunteer availability.');
 
-                if (startHour >= endHour) 
-                {
-                    alert('Start Hour must be less than End Hour.');
-                    return;
-                }
+            if (confirmChange) {
+                // Remove all current shifts from localStorage
+                localStorage.removeItem('shifts');
 
-                // Show a confirmation dialog before proceeding
-                const confirmChange = window.confirm('Are you sure you want to update the schedule? This will delete all current shifts.');
+                // Clear the time field for all volunteers
+                const volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
+                volunteers.forEach(volunteer => {
+                    volunteer.time = []; // Clear the time field (empty array)
+                });
 
-                if (confirmChange) {
-                    // Remove all current shifts from localStorage
-                    localStorage.removeItem('shifts');
+                // Save the updated volunteers back to localStorage
+                localStorage.setItem('volunteers', JSON.stringify(volunteers));
 
-                    // Save updated schedule (start/end hours) to localStorage
-                    localStorage.setItem('scheduleData', JSON.stringify({ startHour, endHour }));
+                // Save updated schedule (start/end hours) to localStorage
+                localStorage.setItem('scheduleData', JSON.stringify({ startHour, endHour }));
 
-                    alert('Schedule updated successfully! All shifts have been cleared.');
-                } else {
-                    alert('Schedule update canceled.');
-                }
-            });
+                alert('Schedule updated successfully! All shifts and volunteer availability have been cleared.');
+            } else {
+                alert('Schedule update canceled.');
+            }
+        });
 
-            // Load form data on page load
-            loadFormData();
-        </script>
+        // Load form data on page load
+        loadFormData();
+    </script>
     </body>
 </html>
