@@ -6,8 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Shift Management</title>
     </head>
-    <body>
-        <h3>Schedule</h3>
+    <body class="darkBody">
+        <h3 class="heading1">SCHEDULE</h3>
         <div class="schedule" id="schedule"></div>
     
         <script>
@@ -89,9 +89,10 @@
 
                         // Update each matching cell with the shift information
                         cells.forEach(cell => {
-                            cell.style.backgroundColor = "#ADD8E6"; // Light blue color to represent the shift
+                            cell.style.backgroundColor = "#fefce5"; // Light blue color to represent the shift
                             cell.style.color = "black";
                             cell.style.textAlign = "center";
+                            cell.style.backgroundColor = "#1c1d21";
 
                             // Add roles as content in the cell
                             cell.innerHTML = `<div>${roles.join(", ")}</div>`;
@@ -103,9 +104,11 @@
             // Load the schedule on page load
             document.addEventListener('DOMContentLoaded', loadSchedule);
         </script>
-        <a href="MAddShift.html"><button name="AddNewShift" type="button">Add New Shift</button></a>
-        <a href="MEditShift.html"><button name="EditExistingShift" type="button">Edit Existing Shift</button></a>
-        <a href="MWorkHours.html"><button name="ChangeOpenWorkHours" type="button">Change Open Work Hours</button></a>
-        <a href="ManagementHome.html"><button name="ManagementHome" type="button">Back To Homepage</button></a>
+        <div class="ManagementBtns">
+            <a href="MAddShift.html"><button name="AddNewShift" type="button" class="extraBtns">Add New Shift</button></a>
+            <a href="MEditShift.html"><button name="EditExistingShift" type="button" class="extraBtns">Edit Existing Shift</button></a>
+            <a href="MWorkHours.html"><button name="ChangeOpenWorkHours" type="button" class="extraBtns">Change Open Work Hours</button></a>
+            <a href="ManagementHome.html"><button name="ManagementHome" type="button" class="extraBtns">Back To Homepage</button></a>
+        </div>
     </body>
 </html>

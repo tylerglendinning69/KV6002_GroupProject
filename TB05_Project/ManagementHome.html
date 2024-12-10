@@ -7,13 +7,28 @@
         <title>Volunteering Solutions</title>
     </head>
     <header>
-        <h2>Volunteering Solutions</h2>
+        <h2 class="logoHeading"><span class="heading1">VOLUNTEERING</span> SOLUTIONS</h2>
     </header>
-    <body>
-        <button name="ScheduleButton" type="button">Schedule</button>
-        <button name="AvailabilityButton" type="button">Availability</button>  
-        <h3>Schedule</h3>
-        <div class="schedule" id="schedule"></div>
+    <body class="darkBody">
+        <h3 class="heading1">SCHEDULE</h3>
+        <div class="button-container">
+            <button name="ScheduleButton" type="button" class="extraBtns">Current Week</button>
+            <button name="AvailabilityButton" type="button" class="extraBtns">Next Week</button>
+        </div>
+        <div class="MngHome">
+            <div class="MngScedule">
+                <div class="schedule" id="schedule"></div>
+            </div>
+            <div class="MngFeatures">
+                <h3 class="heading1">MANAGEMENT FEATURES</h3>
+                <a href="MVolunteerManagement.html"><button name="VolunteerManagement" type="button" class="MngFeatureBtns">Volunteer Management</button></a>
+                <a href="MRoleManagement.html"><button name="RoleManagement" type="button" class="MngFeatureBtns">Role Management</button></a>
+                <a href="MShiftManagement.html"><button name="BlockTimeFrame" type="button" class="MngFeatureBtns">Shift Management</button></a>
+            </div>
+        </div>
+        <div class="footer">
+            <p class="footer-content"> <span class="fcontent">CONTACT US:</span>  TB05.johndoe69@gmail.com , +44 6969696969</p>
+        </div>
     
         <script>
             const scheduleContainer = document.getElementById('schedule');
@@ -94,9 +109,10 @@
 
                         // Update each matching cell with the shift information
                         cells.forEach(cell => {
-                            cell.style.backgroundColor = "#ADD8E6"; // Light blue color to represent the shift
+                            cell.style.backgroundColor = "#fefce5"; // Light blue color to represent the shift
                             cell.style.color = "black";
                             cell.style.textAlign = "center";
+                            cell.style.backgroundColor = "#1c1d21";
 
                             // Add roles as content in the cell
                             cell.innerHTML = `<div>${roles.join(", ")}</div>`;
@@ -109,9 +125,6 @@
             document.addEventListener('DOMContentLoaded', loadSchedule);
         </script>
         
-        <h3>Management Features</h3>
-        <a href="MVolunteerManagement.html"><button name="VolunteerManagement" type="button">Volunteer Management</button></a>
-        <a href="MRoleManagement.html"><button name="RoleManagement" type="button">Role Management</button></a>
-        <a href="MShiftManagement.html"><button name="BlockTimeFrame" type="button">Shift Management</button></a>
+
     </body>
 </html>

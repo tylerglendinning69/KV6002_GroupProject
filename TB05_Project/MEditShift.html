@@ -10,17 +10,17 @@
     <h1>Edit or Remove Shifts</h1>
 
     <div id="shiftsContainer">
-        <h2>Existing Shifts</h2>
-        <div id="shiftsList">
+       
+        <div id="shiftsList" class="shiftsList">
             <!-- Shifts will be dynamically loaded here -->
         </div>
     </div>
 
-    <div id="editShiftContainer" style="display: none;">
+    <div id="editShiftContainer" style="display: none;" class="editShiftContainer">
         <h2>Edit Shift</h2>
         <form id="editShiftForm">
             <label for="editDay">Day:</label>
-            <select id="editDay" required>
+            <select id="editDay" required class="roleType">
                 <option value="Monday">Monday</option>
                 <option value="Tuesday">Tuesday</option>
                 <option value="Wednesday">Wednesday</option>
@@ -31,20 +31,20 @@
             </select>
 
             <label for="editStartTime">Start Time:</label>
-            <input type="time" id="editStartTime" required>
+            <input type="time" id="editStartTime" required class="roleType">
 
             <label for="editEndTime">End Time:</label>
-            <input type="time" id="editEndTime" required>
+            <input type="time" id="editEndTime" required class="roleType">
 
             <label for="editRoles">Roles:</label>
-            <input type="text" id="editRoles" placeholder="Comma-separated roles (e.g., Manager, Assistant)" required>
+            <input type="text" id="editRoles" placeholder="Comma-separated roles (e.g., Manager, Assistant)" required class="roleType">
 
-            <button type="submit">Save Changes</button>
+            <button type="submit" class="extraBtns2" style="margin-top: 40px;">Save Changes</button>
         </form>
-        <button id="cancelEdit">Cancel</button>
+        <button id="cancelEdit" class="extraBtns2">Cancel</button>
     </div>
 
-    <a href="MShiftManagement.html"><button>Back to Shift Management</button></a>
+    <a href="MShiftManagement.html" class="extraBtnEdit"><button class="extraBtns">Back to Shift Management</button></a>
 
     <script>
         const shiftsContainer = document.getElementById('shiftsContainer');
@@ -52,6 +52,7 @@
         const editShiftContainer = document.getElementById('editShiftContainer');
         const editShiftForm = document.getElementById('editShiftForm');
         const cancelEditButton = document.getElementById('cancelEdit');
+        
 
         let shifts = JSON.parse(localStorage.getItem('shifts')) || [];
         let editingShiftIndex = null;
@@ -73,9 +74,16 @@
                     <p><strong>Day:</strong> ${shift.day}</p>
                     <p><strong>Time:</strong> ${shift.time}</p>
                     <p><strong>Roles:</strong> ${shift.roles.join(', ')}</p>
-                    <button onclick="editShift(${index})">Edit</button>
-                    <button onclick="removeShift(${index})">Remove</button>
+                    <button onclick="editShift(${index})" class="extraBtns2">Edit</button>
+                    <button onclick="removeShift(${index})" class="extraBtns2">Remove</button>
                 `;
+                shiftElement.style.padding = '30px';
+                shiftElement.style.margin = '25px';
+                shiftElement.style.backgroundColor = '#fefce5';
+                shiftElement.style.borderRadius = '25px';
+                shiftElement.style.width='fit-content';
+                shiftElement.style.border = '5px solid #8663bc';
+                
                 shiftsList.appendChild(shiftElement);
             });
         }
@@ -136,6 +144,8 @@
         });
 
         cancelEditButton.addEventListener('click', cancelEdit);
+        cancelEditButton.style.width = '100%';
+        cancelEditButton.style.marginTop = '10px';
 
         function cancelEdit() {
             shiftsContainer.style.display = 'block';

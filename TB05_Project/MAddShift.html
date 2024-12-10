@@ -10,10 +10,10 @@
         <header>
             <h2>Add Shift</h2>
         </header>
-        <div class="main-container">
-            <h3>Select a Time Slot</h3>
-            <label for="day-select">Day:</label>
-            <select id="day-select">
+        <div class="shift-container">
+            <h3 class="heading2">Select a Time Slot</h3>
+            <label for="day-select" class="shiftHeadings">Day:</label>
+            <select id="day-select" class="shiftSelect">
                 <option value="" selected disabled>Select a day</option>
                 <option value="Monday">Monday</option>
                 <option value="Tuesday">Tuesday</option>
@@ -24,19 +24,20 @@
                 <option value="Sunday">Sunday</option>
             </select>
 
-            <label for="start-time">Start Time:</label>
-            <select id="start-time"></select>
+            <label for="start-time" class="shiftHeadings">Start Time:</label>
+            <select id="start-time" class="shiftSelect"></select>
 
-            <label for="end-time">End Time:</label>
-            <select id="end-time"></select>
+            <label for="end-time" class="shiftHeadings">End Time:</label>
+            <select id="end-time" class="shiftSelect"></select>
 
-            <h3>Assign Roles</h3>
-            <div id="roles-container">
+            <h3 class="heading2">Assign Roles</h3>
+            <div id="roles-container" class="roleMargins">
                 <!-- Roles checkboxes will be dynamically loaded here -->
             </div>
 
-            <button id="save-shift" type="button">Save Shift</button>
+            <button id="save-shift" type="button" class="extraBtns btnMargin saveShift">Save Shift</button>
         </div>
+        <a href="MShiftManagement.html"><button name="BackToShift" type="button" class="extraBtns btnMargin">Back To Shift Management</button></a>
 
         <script>
             const rolesContainer = document.getElementById('roles-container');
@@ -79,6 +80,8 @@
                     roleCheckbox.type = 'checkbox';
                     roleCheckbox.value = role.Role;
                     roleCheckbox.id = `role-${role.Role}`;
+                    roleCheckbox.style.marginBottom = '15px';
+                    roleCheckbox.style.marginRight = '10px';
 
                     const roleLabel = document.createElement('label');
                     roleLabel.textContent = role.Role;
@@ -150,6 +153,6 @@
                 loadRoles();
             });
         </script>
-        <a href="MShiftManagement.html"><button name="BackToShift" type="button">Back To Shift Management</button></a>
+        
     </body>
 </html>

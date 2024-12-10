@@ -1,5 +1,9 @@
-body {
-    background-color: #ffffff;
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #313537;
 }
 
 h1 {
@@ -66,9 +70,10 @@ input {
 .schedule {
     display: grid;
     gap: 1px;
-    background-color: #ccc;
+    background-color: #8663bc;
     margin-top: 20px;
     overflow-x: auto; /* Enable horizontal scrolling for smaller screens */
+
 }
 
 /* Header Cells */
@@ -94,8 +99,8 @@ input {
 
 /* Individual Schedule Cells */
 .schedule-cell {
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
+    background-color: #1c1d21;
+    border: 1px solid #8663bc;
     padding: 10px;
     text-align: center;
     position: relative;
@@ -198,21 +203,23 @@ label {
 
 .schedule {
     display: grid;
-    border: 1px solid #ddd;
+    border: 1px solid #8663bc;
     border-radius: 8px;
     overflow: hidden;
 }
 
 .schedule div {
-    border: 1px solid #ddd;
+    /*border: 1px solid #8663bc;*/
     padding: 10px;
     text-align: center;
-    background-color: #f9f9f9;
+    /*background-color: #1c1d21;*/
+    color: #fefce5;
 }
 
 .time-column {
-    background-color: #f1f1f1;
+    background-color: #8663bc;
     font-weight: bold;
+    border: 1px solid #fff;
 }
 
 .schedule-row {
@@ -249,6 +256,7 @@ label {
     grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
     align-items: center;
+    border: 2px solid white;
 }
 
 .container div {
@@ -259,7 +267,8 @@ label {
 
 .header {
     font-weight: bold;
-    background-color: #ddd;
+    background-color: #8663ac;
+    color: #fff;
 }
 
 
@@ -295,18 +304,242 @@ a {
     border: 2px solid #005f4b; /* Darker border for emphasis */
 }
 
-/* Role selection area styling */
-#roles-container {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+
+
+/*ManagementHome*/
+.darkBody {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #313537;
+    
+}
+.button-container{
+    display: flex;
+    flex-direction: row;
+    height: 100px;
+}
+.MngFeatures{
+    display: flex;
+    flex-direction: column;
+    place-self: center;
+    background-color: #fefce5;
+    padding: 30px;
+    border-radius: 50px;
+    margin-left: 10px;
 }
 
-#roles-container label {
-    display: block;
-    margin: 5px 0;
-    font-size: 14px;
-    color: #555;
+.MngFeatureBtns{
+    margin-top: 10px;
+    background-color:#1c1d21 ;
+    padding: 15px;
+    width: 100%;
+    border-radius: 50px;
+    transition: background-color 0.25s;
+
 }
+
+.MngFeatureBtns:hover{
+    background-color: #8663bc;
+}
+
+.MngHome {
+    flex: 1; 
+    display: grid;
+    grid-template-columns: 80% 20%;
+}
+
+.logoHeading{
+    color: #f0f0f0;
+}
+
+.heading1{
+    color: #8663bc;
+    font-size: larger;
+}
+
+.extraBtns{
+    color: #8663bc;
+    font-weight: bold;
+    background-color: #fefce5;
+    border-radius: 50px;
+    transition: background-color 0.25s, color 0.25s;
+    height: min-content;
+}
+
+.extraBtns:hover{
+    color: #f0f0f0;
+    background-color: #8663bc;
+}
+
+.footer {
+    background-color: #fefce5;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 75px;
+}
+
+.footer-content{
+    padding: 20px;
+    font-weight: bold;
+
+
+}
+
+.fcontent{
+    color: #8663bc;
+}
+
+/*MShiftManagement*/
+.ManagementBtns .extraBtns{
+    margin-left: 5px;
+    
+}
+
+.ManagementBtns{
+    margin-top: 20px;
+}
+
+/*Role Management*/
+.fontRole{
+    color: white;
+    margin-left: 15px;
+    font-weight: 500;
+}
+
+.btnMargin{
+    margin-top: 15px;
+    
+}
+
+.roleMng-container{
+    display: flex;
+    align-self: center;
+    flex-direction: column;
+}
+
+.roleInput{
+    margin-left: 15px;
+}
+
+.roleType{
+    padding: 15px;
+    font-weight: bold;
+    border: 2px solid #8663ac;
+    color: white;
+    font-size: medium;
+    border-radius: 20px;
+    background-color: #1c1d21
+}
+
+.heading2{
+    color: #fefce5;
+    font-weight: 700;
+    margin: 10px;
+    font-size: larger;
+}
+
+/*Add Shift*/
+
+.shift-container{
+    background-color: #1c1d21;
+    height: fit-content;
+    width: auto;
+    border: 5px solid #8663ac;
+}
+
+.shiftHeadings{
+    color:#fefce5 ;
+    margin: 10px;
+}
+
+.shiftSelect{
+    padding: 5px;
+    border-radius: 10px;
+    border: 5px solid #8663ac;
+}
+
+.saveShift{
+    margin:10px;
+}
+
+.roleMargins{
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: #1c1d21;
+    margin-top: 20px;
+    padding: 10px;
+    border: 5px solid #8663ac;
+    border-radius: 5px;
+}
+
+
+#roles-container label {
+    margin: 5px 0;
+    font-size: medium;
+    color: #fefce5;
+}
+
+.scheduleForm{
+    display: flex;
+    align-self: center;
+    margin-top: 100px;
+
+}
+
+.workHrsBack{
+    display: flex;
+    justify-self: center;
+    margin-top: 50px;
+}
+
+/*Edit Shifts*/
+
+.extraBtns2{
+    
+    font-weight: bold;
+    background-color:#1c1d21 ;
+    border-radius: 50px;
+    transition: background-color 0.25s, color 0.25s, border 0.25s;
+    height: min-content;
+    border: 3px solid #8663ac;
+}
+
+.extraBtns2:hover{
+    color: #f0f0f0;
+    background-color: #8663bc;
+    border: 3px solid black;
+}
+
+.shiftsList{
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 30px;
+    justify-content: center;
+}
+
+.extraBtnEdit{
+    display: flex;
+    align-self: center;
+    margin-top: 150px;
+}
+
+.editShiftContainer{
+    display: flex;
+    align-self: center;
+    background-color: #fefce5;
+    padding: 30px;
+    border-radius: 20px;
+    border: 5px solid #8663ac;
+}
+
+.editShiftContainer .roleType{
+    margin-bottom: 15px;
+    margin-top: 10px;
+}
+
+.editShiftContainer .extraBtns2{
+    background-color: #8663ac;
+}
+

@@ -8,16 +8,16 @@
 </head>
     <body>
         <h1>Update Schedule</h1>
-        <form id="scheduleForm">
-            <label for="startHour">Start Hour:</label>
-            <input type="number" id="startHour" min="0" max="23" required>
-
-            <label for="endHour">End Hour:</label>
-            <input type="number" id="endHour" min="1" max="24" required>
-
-            <button type="submit">Save Changes</button>
-        </form>
-        <a href="MShiftManagement.html"><button>Back to Schedule</button></a>
+        <div class="scheduleForm">
+            <form id="scheduleForm">
+                <label for="startHour" class="heading2">Start Hour:</label>
+                <input type="number" id="startHour" min="0" max="23" class="roleType" required>
+                <label for="endHour" class="heading2">End Hour:</label>
+                <input type="number" id="endHour" min="1" max="24" class="roleType" required>
+                <button type="submit" class="extraBtns btnMargin">Save Changes</button>
+            </form>
+        </div>
+        <a href="MShiftManagement.html" ><button class="extraBtns btnMargin workHrsBack">Back to Schedule</button></a>
 
         <script>
             const scheduleForm = document.getElementById('scheduleForm');

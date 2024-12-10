@@ -7,7 +7,10 @@
         <title>Role Management</title>
     </head>
     <body>
-        <div class="main-container">
+        <div>
+            <h1>ROLE MANAGEMENT</h1>
+        </div>
+        <div class="main-container roleMng-container">
             <!-- Table Section -->
             <div class="table-container">
                 <div class="role-container">
@@ -17,7 +20,9 @@
                     <div class="header">Remove</div>
                 </div>
             </div>
+            <a href="MAddRole.html"><button name="AddRole" type="button" class="extraBtns btnMargin">Add Role</button></a>
         </div>
+
         <script>
             let roles = [];
 
@@ -63,20 +68,30 @@
 
                 roles.forEach((item, index) => {
                     const roleDiv = document.createElement('div');
+                    roleDiv.className = 'roleBorder fontRole';
                     const editDiv = document.createElement('div');
+                    editDiv.className = 'roleBorder fontRole';
                     const removeDiv = document.createElement('div');
+                    removeDiv.className = 'roleBorder fontRole';
 
                     roleDiv.textContent = item.Role;
 
+                    const roleCont = document.createElement('div');
+                    
+
                     // Edit Button
                     const editButton = document.createElement('button');
+                    editButton.className = 'extraBtns';
                     editButton.textContent = 'Edit';
+                    editButton.style.marginBottom = '20px';
                     editButton.onclick = () => handleEditRole(index);
                     editDiv.appendChild(editButton);
 
                     // Remove Button
                     const removeButton = document.createElement('button');
+                    removeButton.className = 'extraBtns ';
                     removeButton.textContent = 'Remove';
+                    removeButton.style.marginBottom = '20px';
                     removeButton.onclick = () => handleRemoveRole(index);
                     removeDiv.appendChild(removeButton);
 
@@ -111,6 +126,6 @@
             });
         </script>
 
-        <a href="MAddRole.html"><button name="AddRole" type="button">Add Role</button></a>
+        
     </body>
 </html>
