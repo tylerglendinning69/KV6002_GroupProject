@@ -37,7 +37,9 @@
             <input type="time" id="editEndTime" required>
 
             <label for="editRoles">Roles:</label>
-            <input type="text" id="editRoles" placeholder="Comma-separated roles (e.g., Manager, Assistant)" required>
+            <div id="rolesContainer">
+                <!-- Roles checkboxes will be dynamically loaded here -->
+            </div>
 
             <button type="submit">Save Changes</button>
         </form>
@@ -52,8 +54,10 @@
         const editShiftContainer = document.getElementById('editShiftContainer');
         const editShiftForm = document.getElementById('editShiftForm');
         const cancelEditButton = document.getElementById('cancelEdit');
+        const rolesContainer = document.getElementById('rolesContainer');
 
         let shifts = JSON.parse(localStorage.getItem('shifts')) || [];
+        let roles = JSON.parse(localStorage.getItem('roles')) || [];
         let editingShiftIndex = null;
 
         // Load work hours
@@ -87,10 +91,38 @@
             const [startTime, endTime] = shift.time.split('-');
             document.getElementById('editStartTime').value = startTime;
             document.getElementById('editEndTime').value = endTime;
-            document.getElementById('editRoles').value = shift.roles.join(', ');
+
+            loadRoles(shift.roles);
 
             shiftsContainer.style.display = 'none';
             editShiftContainer.style.display = 'block';
+        }
+
+        function loadRoles(assignedRoles) {
+            rolesContainer.innerHTML = '';
+
+            roles.forEach(role => {
+                const div = document.createElement('div');
+                div.classList.add('role-item');
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `role-${role.Role}`;
+                checkbox.name = 'roles';
+                checkbox.value = role.Role;
+
+                if (assignedRoles.includes(role.Role)) {
+                    checkbox.checked = true;
+                }
+
+                const label = document.createElement('label');
+                label.htmlFor = `role-${role.Role}`;
+                label.textContent = role.Role;
+
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                rolesContainer.appendChild(div);
+            });
         }
 
         function removeShift(index) {
@@ -108,7 +140,8 @@
             const updatedDay = document.getElementById('editDay').value;
             const updatedStartTime = document.getElementById('editStartTime').value;
             const updatedEndTime = document.getElementById('editEndTime').value;
-            const updatedRoles = document.getElementById('editRoles').value.split(',').map(role => role.trim());
+            const updatedRoles = Array.from(document.querySelectorAll('input[name="roles"]:checked'))
+                .map(checkbox => checkbox.value);
 
             const updatedStartHour = parseInt(updatedStartTime.split(':')[0], 10);
             const updatedEndHour = parseInt(updatedEndTime.split(':')[0], 10);
