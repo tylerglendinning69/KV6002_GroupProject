@@ -22,16 +22,12 @@
             <label for="name">Name</label>
             <input type="text" id="name" name="name" placeholder="Enter volunteer's name" required>
             
-            <label for="time">Time</label>
-            <input type="text" id="time" name="time" placeholder="Enter time (Monday 8:00-9:00, etc)" required>
-            
-            <label for="roles">Roles</label>
-            <div id="rolesContainer" class="role-container">
-                <!-- Roles will be dynamically populated here -->
-            </div>
-            
             <label for="email">Email</label>
             <input type="email" id="email" name="email" placeholder="Enter volunteer's email" required>
+            
+            <div class="preferences">
+                <button type="button" id="editPreferencesButton">Edit Time and Roles</button>
+            </div>
             
             <input type="submit" value="Save Changes">
         </form>
@@ -51,32 +47,6 @@
                 });
             }
     
-            // Load roles from localStorage
-            function loadRoles() {
-                const rolesContainer = document.getElementById("rolesContainer");
-                const roles = JSON.parse(localStorage.getItem("roles")) || [];
-    
-                // Dynamically add checkboxes for roles
-                roles.forEach(role => {
-                    const div = document.createElement("div");
-                    div.className = "role-item";
-    
-                    const checkbox = document.createElement("input");
-                    checkbox.type = "checkbox";
-                    checkbox.id = `role-${role.Role}`;
-                    checkbox.name = "roles";
-                    checkbox.value = role.Role;
-    
-                    const label = document.createElement("label");
-                    label.htmlFor = `role-${role.Role}`;
-                    label.textContent = role.Role;
-    
-                    div.appendChild(checkbox);
-                    div.appendChild(label);
-                    rolesContainer.appendChild(div);
-                });
-            }
-    
             // Prepopulate the form with selected volunteer's data
             function prepopulateForm(volunteerIndex) {
                 const volunteers = JSON.parse(localStorage.getItem("volunteers")) || [];
@@ -84,16 +54,10 @@
     
                 // Fill in the form fields with volunteer data
                 document.getElementById("name").value = volunteer.name;
-                document.getElementById("time").value = volunteer.time;
                 document.getElementById("email").value = volunteer.email;
-    
-                // Check the selected roles
-                const checkboxes = document.querySelectorAll('input[name="roles"]');
-                checkboxes.forEach(checkbox => {
-                    if (volunteer.roles.includes(checkbox.value)) {
-                        checkbox.checked = true;
-                    }
-                });
+
+                // Save the selected volunteer index for redirecting
+                localStorage.setItem("selectedVolunteerIndex", volunteerIndex);
             }
     
             // Save updated volunteer data
@@ -102,24 +66,14 @@
                 
                 const volunteerIndex = document.getElementById("volunteerSelect").value;
                 const name = document.getElementById("name").value;
-                const time = document.getElementById("time").value;
                 const email = document.getElementById("email").value;
-                
-                // Get selected roles as an array of strings
-                const selectedRoles = Array.from(document.querySelectorAll('input[name="roles"]:checked'))
-                                           .map(checkbox => checkbox.value);
-    
+
                 // Get existing volunteers from localStorage
                 const volunteers = JSON.parse(localStorage.getItem("volunteers")) || [];
                 
                 // Update selected volunteer
-                volunteers[volunteerIndex] = {
-                    name: name,
-                    time: time,
-                    // Store roles as a comma-separated string
-                    roles: selectedRoles.join(", "),  // Join array into a string
-                    email: email
-                };
+                volunteers[volunteerIndex].name = name;
+                volunteers[volunteerIndex].email = email;
                 
                 // Save back to localStorage
                 localStorage.setItem("volunteers", JSON.stringify(volunteers));
@@ -135,11 +89,21 @@
                     prepopulateForm(volunteerIndex);
                 }
             });
+
+            // Redirect to VInputPreferences.html when clicking the Edit Preferences button
+            document.getElementById("editPreferencesButton").addEventListener("click", function() {
+                const volunteerIndex = document.getElementById("volunteerSelect").value;
+                if (volunteerIndex) {
+                    window.location.href = "MInputPreferences.html";
+                } else {
+                    alert("Please select a volunteer first!");
+                }
+            });
     
             // Initialize the page
             loadVolunteers();
-            loadRoles();
         </script>
+        
         <a href="MVolunteerManagement.html"><button name="BackToVolunteer" type="button">Cancel</button></a>
     </body>
 </html>
