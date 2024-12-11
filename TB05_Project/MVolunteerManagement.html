@@ -9,16 +9,16 @@
     <body>
         <h1>Volunteer Management</h1>
     
-        <div class="container">
+        <div class="VMcontainer">
             <!-- Table to display the volunteers -->
             <table class="volunteer-table" id="volunteerTable">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Time</th>
-                        <th>Roles</th>
-                        <th>Email</th>
-                        <th>Actions</th>
+                        <th class="vmHeader">Name</th>
+                        <th class="vmHeader vmHeader1">Time</th>
+                        <th class="vmHeader vmHeader1">Roles</th>
+                        <th class="vmHeader">Email</th>
+                        <th class="vmHeader vmHeader2">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="volunteerTableBody">
@@ -27,9 +27,10 @@
             </table>
     
             <!-- Buttons to add and edit volunteers -->
-            <div>
-                <button onclick="window.location.href = 'MAddVolunteer.html'">Add Volunteer</button>
-            </div>
+        </div>
+        <div class="VM">
+            <button onclick="window.location.href = 'MAddVolunteer.html'" class="extraBtns btnMargin">Add Volunteer</button>
+            <a href="ManagementHome.html"><button name="BackToShift" type="button" class="extraBtns btnMargin">Back To Home</button></a>
         </div>
     
         <script>
@@ -48,25 +49,32 @@
                     // Create table cells for each volunteer's data
                     const nameCell = document.createElement("td");
                     nameCell.textContent = volunteer.name;
+                    nameCell.className = 'vmBody';
     
                     const timeCell = document.createElement("td");
                     timeCell.textContent = volunteer.time;
+                    timeCell.className = 'vmBody';
     
                     const rolesCell = document.createElement("td");
                     rolesCell.textContent = volunteer.roles;  // Display roles as a comma-separated string
+                    rolesCell.className = 'vmBody';
     
                     const emailCell = document.createElement("td");
                     emailCell.textContent = volunteer.email;
+                    emailCell.className = 'vmBody';
     
                     const actionsCell = document.createElement("td");
+                    actionsCell.className = 'vmBody';
     
                     // Add Edit and Remove buttons
                     const editButton = document.createElement("button");
                     editButton.textContent = "Edit";
+                    editButton.className = 'extraBtns';
                     editButton.onclick = () => editVolunteer(index);
     
                     const removeButton = document.createElement("button");
                     removeButton.textContent = "Remove";
+                    removeButton.className = 'extraBtns';
                     removeButton.onclick = () => removeVolunteer(index);
     
                     actionsCell.appendChild(editButton);
@@ -110,6 +118,6 @@
             // Call loadVolunteers when the page loads
             window.onload = loadVolunteers;
         </script>
-        <a href="ManagementHome.html"><button name="BackToShift" type="button">Back To Home</button></a>
+        
     </body>
 </html>
