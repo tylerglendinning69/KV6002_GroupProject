@@ -143,20 +143,33 @@
                     return;
                 }
 
-                const shift = {
-                    day: selectedDay,
-                    time: `${startTime}-${endTime}`,
-                    roles: selectedRoles
-                };
-
-                if (hasOverlap(shift)) {
-                    alert("An existing shift overlaps with this time. Please remove or modify the existing shift first.");
-                    return;
+                // Generate one-hour blocks for the shift
+                const timeBlocks = [];
+                let currentTime = startTime;
+                while (currentTime < endTime) {
+                    const nextTime = addOneHour(currentTime);
+                    timeBlocks.push(`${currentTime}-${nextTime}`);
+                    currentTime = nextTime;
                 }
 
-                shifts.push(shift);
-                localStorage.setItem('shifts', JSON.stringify(shifts));
+                // Save each one-hour block as an individual shift
+                timeBlocks.forEach(timeBlock => {
+                    const shift = {
+                        day: selectedDay,
+                        time: timeBlock,
+                        roles: selectedRoles
+                    };
 
+                    // Check for overlap for each block
+                    if (hasOverlap(shift)) {
+                        alert(`An existing shift overlaps with the time block: ${timeBlock}. Please modify the shift.`);
+                        return;
+                    }
+
+                    shifts.push(shift);
+                });
+
+                localStorage.setItem('shifts', JSON.stringify(shifts));
                 alert("Shift saved successfully!");
 
                 // Reset the form
@@ -167,6 +180,14 @@
                     checkbox.checked = false;
                 });
             }
+
+// Helper function to add one hour to a time string
+function addOneHour(time) {
+    const [hour, minute] = time.split(':').map(Number);
+    const newHour = (hour + 1) % 24;
+    return `${String(newHour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+}
+
 
             document.getElementById('save-shift').addEventListener('click', saveShift);
 
