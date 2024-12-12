@@ -54,10 +54,7 @@ input {
     align-items: center;
 }
 
-.loginBtns .extraBtns3{
-    background-color: #8663ac;
-    color: white;
-}
+
 
 .loginBtns .extraBtns3:hover{
     background-color: #1c1d21;
@@ -77,10 +74,11 @@ input {
 
 .login-headings{
     display: flex;
+    justify-content: center;
 }
 
 .heading4{
-    margin-left: 2px;
+    margin-left: 5px;
 }
 
 .loginElements .extraBtns3{
@@ -537,10 +535,21 @@ a {
 
 }
 
+#scheduleForm{
+    background-color: #fefce5;
+    padding: 30px;
+    border-radius: 30px;
+}
+
 .workHrsBack{
     display: flex;
     justify-self: center;
     margin-top: 50px;
+}
+
+.heading-label{
+    margin-top: 15px;
+
 }
 
 /*Edit Shifts*/
@@ -753,5 +762,45 @@ a {
     color: white;
 }
 
+/*----------------------------------------------------------*/
+
+.scheduleForm .extraBtns3{
+    background-color: #8663ac;
+    color: white;
+    transition: background-color 0.25s;
+}
+
+.form-white{
+    display: flex;
+    justify-content: center;
+    margin-top: 150px;
+}
+
+.sideBtns{
+    color: white;
+    font-weight: bold;
+    background-color: #8663ac;
+    border-radius: 50px;
+    transition: background-color 0.25s, color 0.25s;
+    height: min-content;
+}
+
+#editRoleForm .button-container{
+    margin-top: 20px;
+}
+
+#addRoleForm .button-container{
+    margin-top: 20px;
+}
+
+.schedule-cell.selected{
+    border: 2px solid #fefce5;
+    background-color: #8663ac;
+}
 
 
+/*Input References*/
+
+.inputGrid{
+    display: grid;
+}

@@ -24,14 +24,16 @@
         <h4>Click on the cells to select which times you are available to work</h4>
     
         <!-- Schedule Grid -->
-        <div class="schedule" id="schedule"></div>
-    
-        <!-- Role Selection -->
-        <h3>Select Roles:</h3>
-        <div id="roleList" class="role-list"></div>
-    
-        <!-- Submit Button -->
-        <button id="submit" class="timetable-submit-btn">Submit Preferences</button>
+        <div class="inputGrid">
+            <div class="schedule" id="schedule"></div>
+            <!-- Role Selection -->
+            <div>
+                <h3>Select Roles:</h3>
+                <div id="roleList" class="role-list"></div>
+                <!-- Submit Button -->
+                <button id="submit" class="timetable-submit-btn">Submit Preferences</button>
+            </div>
+        </div>
     
         <script>
             const scheduleContainer = document.getElementById('schedule');
@@ -125,7 +127,7 @@
             function createHeaderCell(content) {
                 const header = document.createElement('div');
                 header.textContent = content;
-                header.classList.add('timetable-header');
+                header.classList.add('header');
                 return header;
             }
     
@@ -133,7 +135,7 @@
             function createTimeCell(content) {
                 const timeColumn = document.createElement('div');
                 timeColumn.textContent = content;
-                timeColumn.classList.add('timetable-time-column');
+                timeColumn.classList.add('time-column');
                 return timeColumn;
             }
     
