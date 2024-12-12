@@ -2,11 +2,20 @@
 <html lang="en">
     <head>
         <link href="TB05css.css" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Volunteer Login</title>
     </head>
     <body class="login-body">
+        <nav class="nav-bar">
+            <header>
+                <h2 class="logoHeading"><span class="heading1">VOLUNTEERING</span> SOLUTIONS</h2>
+            </header>
+
+        </nav>
         <section class="login">
             <div class="login-headings">
                 <h1>Volunteer Login</h1>
@@ -15,17 +24,18 @@
                 <div>
                     <form action="VolunteerHome.html">
                         <label>Username</label>
-                        <input type="text" name="username" required><br><br>
+                        <input type="text" name="username" class="roleType" placeholder="Enter username" required><br><br>
                         <label>Password</label>
-                        <input type="password" name="password" required><br><br>
-                        <a href="VolunteerHome.html"><input type="submit" value="Login"></a>
+                        <input type="password" name="password" class="roleType" placeholder="Enter password" required><br><br>
+                        <a href="VolunteerHome.html"><button class="extraBtns extraBtns3">LOG IN</button></a>
                     </form>
-                    <p>forgotten password? Click <a href="ResetPassword.html">here</a> to reset.</p>
+                    <p class="register-txt">Forgotten password? Click <a href="ResetPassword.html">here</a> to reset.</p>
                 </div>
                 <div>
                     <!--The Images goes here-->
                 </div>
             </div>
         </section>
+
     </body>
 </html>

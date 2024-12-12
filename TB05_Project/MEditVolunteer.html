@@ -2,6 +2,9 @@
 <html lang="en">
     <head>
         <link href="TB05css.css" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Volunteer Management</title>
@@ -11,26 +14,28 @@
         <h2>Edit Volunteer</h2>
         
         <!-- Volunteer Selection Dropdown -->
-        <div class="select-volunteer">
-            <label for="volunteerSelect">Select Volunteer to Edit</label>
-            <select id="volunteerSelect">
-                <option value="">-- Select Volunteer --</option>
-            </select>
-        </div>
-    
-        <form id="editVolunteerForm">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" placeholder="Enter volunteer's name" required>
-            
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Enter volunteer's email" required>
-            
-            <div class="preferences">
-                <button type="button" id="editPreferencesButton">Edit Time and Roles</button>
+        <div class="editVolunteer">
+            <div class="select-volunteer">
+                <label for="volunteerSelect">Select Volunteer to Edit</label>
+                <select id="volunteerSelect" class="roleType">
+                    <option value="">-- Select Volunteer --</option>
+                </select>
             </div>
+            <form id="editVolunteerForm">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter volunteer's name" class="roleType" required>
             
-            <input type="submit" value="Save Changes">
-        </form>
+                <label for="email" class="btnMargin">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter volunteer's email" class="roleType" required>
+            
+                <div class="preferences">
+                    <button type="button" id="editPreferencesButton" class="extraBtns2 btnMargin">Edit Time and Roles</button>
+                </div>
+            
+                <input type="submit" value="Save Changes" class="extraBtns2 btnMargin sChanges">
+            </form>
+            <a href="MVolunteerManagement.html"><button name="BackToVolunteer" type="button" class="extraBtns2 btnMargin">Cancel</button></a>
+        </div>
     
         <script>
             // Load volunteers from localStorage
@@ -104,6 +109,6 @@
             loadVolunteers();
         </script>
         
-        <a href="MVolunteerManagement.html"><button name="BackToVolunteer" type="button">Cancel</button></a>
+        
     </body>
 </html>
