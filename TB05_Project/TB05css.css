@@ -804,3 +804,20 @@ a {
 .inputGrid{
     display: grid;
 }
+
+.timetable-role{
+    color: white;
+    font-weight: bolder;
+    background-color: #8663ac;
+    padding: 10px;
+    margin-bottom: 5px;
+    font-size: 15px;
+}
+
+.timetable-role.selected{
+    background-color: #fefce5;
+    color: #8663ac;
+    transition: color 0.25s background-color 0.25s;
+}
+
+
