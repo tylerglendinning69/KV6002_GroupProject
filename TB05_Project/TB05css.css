@@ -668,6 +668,30 @@ a {
     border-radius: 15px;
 }
 
+.time-list {
+    padding-left: 20px;
+    list-style-type: none;
+    margin: 0;
+    text-align: left;
+}
+
+.time-list li {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.roles-list {
+    padding-left: 20px;
+    list-style-type: none;
+    margin: 0;
+    text-align: left;
+}
+
+.roles-list li {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
 .vmHeader{
     
     color: white;

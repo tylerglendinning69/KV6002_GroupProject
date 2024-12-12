@@ -41,66 +41,104 @@
             function loadVolunteers() {
                 const volunteers = JSON.parse(localStorage.getItem("volunteers")) || [];
                 const volunteerTableBody = document.getElementById("volunteerTableBody");
-    
+        
                 // Clear the table before populating it
                 volunteerTableBody.innerHTML = '';
-    
+        
                 // Populate the table with volunteers data
                 volunteers.forEach((volunteer, index) => {
                     const row = document.createElement("tr");
-    
+        
                     // Create table cells for each volunteer's data
                     const nameCell = document.createElement("td");
                     nameCell.textContent = volunteer.name;
                     nameCell.className = 'vmBody';
-    
+        
                     const timeCell = document.createElement("td");
-                    timeCell.textContent = volunteer.time;
                     timeCell.className = 'vmBody';
-    
+        
+                    // Create a list for time
+                    const timeList = document.createElement("ul");
+                    timeList.className = "time-list";
+        
+                    // Check if time is an array, and populate list items
+                    if (Array.isArray(volunteer.time)) {
+                        volunteer.time.forEach(timeSlot => {
+                            const timeItem = document.createElement("li");
+                            timeItem.textContent = timeSlot;
+                            timeList.appendChild(timeItem);
+                        });
+                    } else {
+                        // Fallback in case time is not an array
+                        const timeItem = document.createElement("li");
+                        timeItem.textContent = volunteer.time || "No time specified";
+                        timeList.appendChild(timeItem);
+                    }
+        
+                    timeCell.appendChild(timeList);
+        
                     const rolesCell = document.createElement("td");
-                    rolesCell.textContent = volunteer.roles;  // Display roles as a comma-separated string
                     rolesCell.className = 'vmBody';
-    
+        
+                    // Create a list for roles
+                    const rolesList = document.createElement("ul");
+                    rolesList.className = "roles-list";
+        
+                    // Check if roles is an array, and populate list items
+                    if (Array.isArray(volunteer.roles)) {
+                        volunteer.roles.forEach(role => {
+                            const roleItem = document.createElement("li");
+                            roleItem.textContent = role;
+                            rolesList.appendChild(roleItem);
+                        });
+                    } else {
+                        // Fallback in case roles is not an array
+                        const roleItem = document.createElement("li");
+                        roleItem.textContent = volunteer.roles || "No roles specified";
+                        rolesList.appendChild(roleItem);
+                    }
+        
+                    rolesCell.appendChild(rolesList);
+        
                     const emailCell = document.createElement("td");
                     emailCell.textContent = volunteer.email;
                     emailCell.className = 'vmBody';
-    
+        
                     const actionsCell = document.createElement("td");
                     actionsCell.className = 'vmBody';
-    
+        
                     // Add Edit and Remove buttons
                     const editButton = document.createElement("button");
                     editButton.textContent = "Edit";
                     editButton.className = 'extraBtns';
                     editButton.onclick = () => editVolunteer(index);
-    
+        
                     const removeButton = document.createElement("button");
                     removeButton.textContent = "Remove";
                     removeButton.className = 'extraBtns';
                     removeButton.onclick = () => removeVolunteer(index);
-    
+        
                     actionsCell.appendChild(editButton);
                     actionsCell.appendChild(removeButton);
-    
+        
                     // Append the cells to the row
                     row.appendChild(nameCell);
                     row.appendChild(timeCell);
                     row.appendChild(rolesCell);
                     row.appendChild(emailCell);
                     row.appendChild(actionsCell);
-    
+        
                     // Append the row to the table body
                     volunteerTableBody.appendChild(row);
                 });
             }
-    
+        
             // Function to edit a volunteer
             function editVolunteer(index) {
                 // Redirect to the edit volunteer page, passing the index in the URL
                 window.location.href = `MEditVolunteer.html?index=${index}`;
             }
-    
+        
             // Function to remove a volunteer with a confirmation prompt
             function removeVolunteer(index) {
                 // Ask for confirmation before removing the volunteer
@@ -117,10 +155,11 @@
                     console.log("Removal cancelled.");
                 }
             }
-    
+        
             // Call loadVolunteers when the page loads
             window.onload = loadVolunteers;
         </script>
+        
         
     </body>
 </html>
