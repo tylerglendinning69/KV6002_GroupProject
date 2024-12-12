@@ -10,14 +10,6 @@
         <title>Volunteer Management</title>
     </head>
     <body>
-        <nav class="nav-bar">
-            <header>
-                <h2 class="logoHeading"><span class="heading1">VOLUNTEERING</span> SOLUTIONS</h2>
-            </header>
-            <div class="logout-container">
-                <a href="Login.html"><button  class="extraBtns">LOG OUT</button></a>
-            </div>
-        </nav>
         <h1>Volunteer Management</h1>
     
         <div class="VMcontainer">
@@ -53,8 +45,11 @@
                 // Clear the table before populating it
                 volunteerTableBody.innerHTML = '';
         
-                // Populate the table with volunteers data
+                // Sort the volunteers' time slots
                 volunteers.forEach((volunteer, index) => {
+                    // Sort the time slots by day and time
+                    const sortedTimes = sortTimeSlots(volunteer.time);
+        
                     const row = document.createElement("tr");
         
                     // Create table cells for each volunteer's data
@@ -70,8 +65,8 @@
                     timeList.className = "time-list";
         
                     // Check if time is an array, and populate list items
-                    if (Array.isArray(volunteer.time)) {
-                        volunteer.time.forEach(timeSlot => {
+                    if (Array.isArray(sortedTimes)) {
+                        sortedTimes.forEach(timeSlot => {
                             const timeItem = document.createElement("li");
                             timeItem.textContent = timeSlot;
                             timeList.appendChild(timeItem);
@@ -141,6 +136,27 @@
                 });
             }
         
+            // Function to sort time slots by day and time
+            function sortTimeSlots(timeSlots) {
+                const daysOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        
+                return timeSlots.sort((a, b) => {
+                    const [dayA, timeA] = a.split(' ');
+                    const [dayB, timeB] = b.split(' ');
+                    const [startA] = timeA.split('-');
+                    const [startB] = timeB.split('-');
+        
+                    // Sort by day first, then by time
+                    const dayComparison = daysOrder.indexOf(dayA) - daysOrder.indexOf(dayB);
+                    if (dayComparison !== 0) {
+                        return dayComparison;
+                    }
+        
+                    // If days are the same, compare by start time
+                    return startA.localeCompare(startB);
+                });
+            }
+        
             // Function to edit a volunteer
             function editVolunteer(index) {
                 // Redirect to the edit volunteer page, passing the index in the URL
@@ -167,7 +183,5 @@
             // Call loadVolunteers when the page loads
             window.onload = loadVolunteers;
         </script>
-        
-        
     </body>
 </html>
