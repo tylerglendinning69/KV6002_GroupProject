@@ -10,7 +10,6 @@
     <h1>Edit or Remove Shifts</h1>
 
     <div id="shiftsContainer">
-       
         <div id="shiftsList" class="shiftsList">
             <!-- Shifts will be dynamically loaded here -->
         </div>
@@ -46,7 +45,9 @@
         <button id="cancelEdit" class="extraBtns2">Cancel</button>
     </div>
 
-    <a href="MShiftManagement.html" class="extraBtnEdit"><button class="extraBtns">Back to Shift Management</button></a>
+    <a href="MShiftManagement.html" class="extraBtnEdit">
+        <button class="extraBtns">Back to Shift Management</button>
+    </a>
 
     <script>
         const shiftsContainer = document.getElementById('shiftsContainer');
@@ -63,19 +64,64 @@
         // Load work hours
         const workHours = JSON.parse(localStorage.getItem('scheduleData')) || { startHour: 8, endHour: 18 };
 
+        function mergeShifts() {
+            const mergedShifts = [];
+
+            shifts.sort((a, b) => {
+                if (a.day !== b.day) return a.day.localeCompare(b.day);
+                return a.time.localeCompare(b.time);
+            });
+
+            shifts.forEach((shift) => {
+                if (mergedShifts.length === 0) {
+                    mergedShifts.push({
+                        day: shift.day,
+                        startTime: shift.time.split('-')[0],
+                        endTime: shift.time.split('-')[1],
+                        roles: shift.roles,
+                    });
+                    return;
+                }
+
+                const lastShift = mergedShifts[mergedShifts.length - 1];
+                const lastEndTime = lastShift.endTime;
+
+                if (
+                    lastShift.day === shift.day &&
+                    JSON.stringify(lastShift.roles) === JSON.stringify(shift.roles) &&
+                    lastEndTime === shift.time.split('-')[0] // Check continuity
+                ) {
+                    // Extend the last shift
+                    lastShift.endTime = shift.time.split('-')[1];
+                } else {
+                    // Start a new shift
+                    mergedShifts.push({
+                        day: shift.day,
+                        startTime: shift.time.split('-')[0],
+                        endTime: shift.time.split('-')[1],
+                        roles: shift.roles,
+                    });
+                }
+            });
+
+            return mergedShifts;
+        }
+
         function loadShifts() {
             shiftsList.innerHTML = '';
-            if (shifts.length === 0) {
+            const mergedShifts = mergeShifts();
+
+            if (mergedShifts.length === 0) {
                 shiftsList.innerHTML = '<p>No shifts available.</p>';
                 return;
             }
 
-            shifts.forEach((shift, index) => {
+            mergedShifts.forEach((shift, index) => {
                 const shiftElement = document.createElement('div');
                 shiftElement.classList.add('shift-item');
                 shiftElement.innerHTML = `
                     <p><strong>Day:</strong> ${shift.day}</p>
-                    <p><strong>Time:</strong> ${shift.time}</p>
+                    <p><strong>Time:</strong> ${shift.startTime} - ${shift.endTime}</p>
                     <p><strong>Roles:</strong> ${shift.roles.join(', ')}</p>
                     <button onclick="editShift(${index})" class="extraBtns2">Edit</button>
                     <button onclick="removeShift(${index})" class="extraBtns2">Remove</button>
@@ -84,20 +130,21 @@
                 shiftElement.style.margin = '25px';
                 shiftElement.style.backgroundColor = '#fefce5';
                 shiftElement.style.borderRadius = '25px';
-                shiftElement.style.width='fit-content';
+                shiftElement.style.width = 'fit-content';
                 shiftElement.style.border = '5px solid #8663bc';
-                
+
                 shiftsList.appendChild(shiftElement);
             });
         }
 
         function editShift(index) {
+            const mergedShifts = mergeShifts();
             editingShiftIndex = index;
-            const shift = shifts[index];
+
+            const shift = mergedShifts[index];
             document.getElementById('editDay').value = shift.day;
-            const [startTime, endTime] = shift.time.split('-');
-            document.getElementById('editStartTime').value = startTime;
-            document.getElementById('editEndTime').value = endTime;
+            document.getElementById('editStartTime').value = shift.startTime;
+            document.getElementById('editEndTime').value = shift.endTime;
 
             loadRoles(shift.roles);
 
@@ -133,11 +180,18 @@
         }
 
         function removeShift(index) {
+            const mergedShifts = mergeShifts();
+            const shiftToRemove = mergedShifts[index];
+
             if (confirm('Are you sure you want to remove this shift?')) {
-                shifts.splice(index, 1);
+                shifts = shifts.filter(
+                    shift =>
+                        shift.day !== shiftToRemove.day ||
+                        shift.time < shiftToRemove.startTime ||
+                        shift.time >= shiftToRemove.endTime
+                );
                 localStorage.setItem('shifts', JSON.stringify(shifts));
                 loadShifts();
-                alert('Shift removed successfully!');
             }
         }
 
@@ -163,11 +217,25 @@
                 return;
             }
 
-            shifts[editingShiftIndex] = {
-                day: updatedDay,
-                time: `${updatedStartTime}-${updatedEndTime}`,
-                roles: updatedRoles
-            };
+            const newShifts = [];
+            for (let hour = updatedStartHour; hour < updatedEndHour; hour++) {
+                newShifts.push({
+                    day: updatedDay,
+                    time: `${hour.toString().padStart(2, '0')}:00-${(hour + 1).toString().padStart(2, '0')}:00`,
+                    roles: updatedRoles,
+                });
+            }
+
+            const mergedShifts = mergeShifts();
+            const oldShift = mergedShifts[editingShiftIndex];
+            shifts = shifts.filter(
+                shift =>
+                    shift.day !== oldShift.day ||
+                    shift.time < oldShift.startTime ||
+                    shift.time >= oldShift.endTime
+            );
+
+            shifts.push(...newShifts);
 
             localStorage.setItem('shifts', JSON.stringify(shifts));
             loadShifts();
@@ -176,8 +244,6 @@
         });
 
         cancelEditButton.addEventListener('click', cancelEdit);
-        cancelEditButton.style.width = '100%';
-        cancelEditButton.style.marginTop = '10px';
 
         function cancelEdit() {
             shiftsContainer.style.display = 'block';
@@ -185,7 +251,6 @@
             editingShiftIndex = null;
         }
 
-        // Load shifts on page load
         loadShifts();
     </script>
 </body>
