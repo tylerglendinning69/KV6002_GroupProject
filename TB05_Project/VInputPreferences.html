@@ -15,23 +15,23 @@
         </header>
     
         <!-- Volunteer Selection Dropdown -->
-        <h3>Select Volunteer:</h3>
-        <select id="volunteerSelect">
+        <h3 class="heading2">Select Volunteer:</h3>
+        <select id="volunteerSelect" class="roleType">
             <!-- Options will be populated dynamically -->
         </select>
     
-        <h3>Select Your Roles and Availability</h3>
-        <h4>Click on the cells to select which times you are available to work</h4>
+        <h3 class="heading2">Select Your Roles and Availability</h3>
+        <h4 class="heading2">Click on the cells to select which times you are available to work</h4>
     
         <!-- Schedule Grid -->
         <div class="inputGrid">
             <div class="schedule" id="schedule"></div>
             <!-- Role Selection -->
             <div>
-                <h3>Select Roles:</h3>
+                <h3 class="heading2">Select Roles:</h3>
                 <div id="roleList" class="role-list"></div>
                 <!-- Submit Button -->
-                <button id="submit" class="timetable-submit-btn">Submit Preferences</button>
+                <div class="button-container"><button id="submit" class="extraBtns">Submit Preferences</button></div>
             </div>
         </div>
     
@@ -151,6 +151,7 @@
                     roleItem.textContent = role;
                     roleItem.classList.add('timetable-role');
                     roleItem.dataset.role = role;
+
     
                     // Toggle role selection
                     roleItem.addEventListener('click', () => toggleRoleSelection(roleItem));
@@ -213,7 +214,7 @@ submitButton.addEventListener('click', () => {
             generateSchedule();
             generateRoleList();
         </script>
-        <a href="VolunteerHome.html"><button name="BackToVolunteer" type="button">Cancel</button></a>
+        <a href="VolunteerHome.html"><button name="BackToVolunteer" type="button" class="extraBtns">Go Back</button></a>
     </body>
 </html>
 
