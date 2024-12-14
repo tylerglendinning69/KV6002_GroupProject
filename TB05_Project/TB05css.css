@@ -54,8 +54,6 @@ input {
     align-items: center;
 }
 
-
-
 .loginBtns .extraBtns3:hover{
     background-color: #1c1d21;
 }
@@ -98,6 +96,7 @@ input {
 .login-body .logoHeading{
     font-size: xx-large;
 }
+
 /* ******************************************************* */
 
 /*-table Input Form*/
@@ -115,7 +114,6 @@ input {
     background-color: #8663bc;
     margin-top: 20px;
     overflow-x: auto; /* Enable horizontal scrolling for smaller screens */
-
 }
 
 /* Header Cells */
@@ -247,10 +245,8 @@ label {
 }
 
 .schedule div {
-    /*border: 1px solid #8663bc;*/
     padding: 10px;
     text-align: center;
-    /*background-color: #1c1d21;*/
     color: #fefce5;
 }
 
@@ -263,8 +259,6 @@ label {
 .schedule-row {
     display: contents;
 }
-
-
 
 .ManLogin{
     margin: 5px;
@@ -310,7 +304,6 @@ label {
     border: 1px solid #1c1d21;
 }
 
-
 .button-container {
     flex: 1;
     display: flex;
@@ -339,12 +332,10 @@ a {
 
 /* Highlight selected time slot */
 .timetable-cell.selected {
-    background-color: #90caf9; /* Light blue for selection */
+    background-color: #90caf9;
     color: #fff;
-    border: 2px solid #005f4b; /* Darker border for emphasis */
+    border: 2px solid #005f4b;
 }
-
-
 
 /*ManagementHome*/
 .darkBody {
@@ -352,14 +343,15 @@ a {
     display: flex;
     flex-direction: column;
     background-color: #313537;
-    
 }
-.button-container{
+
+.button-container {
     display: flex;
     flex-direction: row;
     height: 100px;
 }
-.MngFeatures{
+
+.MngFeatures {
     display: flex;
     flex-direction: column;
     place-self: center;
@@ -369,17 +361,16 @@ a {
     margin-left: 10px;
 }
 
-.MngFeatureBtns{
+.MngFeatureBtns {
     margin-top: 10px;
     background-color:#1c1d21 ;
     padding: 15px;
     width: 100%;
     border-radius: 50px;
     transition: background-color 0.25s;
-
 }
 
-.MngFeatureBtns:hover{
+.MngFeatureBtns:hover {
     background-color: #8663bc;
 }
 
@@ -390,16 +381,16 @@ a {
     margin-top: 10px;
 }
 
-.logoHeading{
+.logoHeading {
     color: #f0f0f0;
 }
 
-.heading1{
+.heading1 {
     color: #8663bc;
     font-size: larger;
 }
 
-.extraBtns{
+.extraBtns {
     color: #8663bc;
     font-weight: bold;
     background-color: #fefce5;
@@ -408,7 +399,7 @@ a {
     height: min-content;
 }
 
-.extraBtns:hover{
+.extraBtns:hover {
     color: #f0f0f0;
     background-color: #8663bc;
 }
@@ -421,67 +412,63 @@ a {
     margin-top: 75px;
 }
 
-.footer-content{
+.footer-content {
     padding: 20px;
     font-weight: bold;
-
-
 }
 
-.fcontent{
+.fcontent {
     color: #8663bc;
 }
 
 /*MShiftManagement*/
-.ManagementBtns .extraBtns{
+.ManagementBtns .extraBtns {
     margin-left: 5px;
-    
 }
 
-.ManagementBtns{
+.ManagementBtns {
     margin-top: 20px;
 }
 
 /*Role Management*/
-.fontRole{
+.fontRole {
     color: white;
     margin-left: 15px;
     font-weight: 500;
 }
 
-.btnMargin{
+.btnMargin {
     margin-top: 15px;
-    
 }
 
-.roleMng-container{
+.roleMng-container {
     display: flex;
     align-self: center;
     flex-direction: column;
 }
 
-.roleInput{
+.roleInput {
     margin-left: 15px;
 }
 
-.roleType{
+.roleType {
     padding: 15px;
     font-weight: bold;
     border: 2px solid #8663ac;
     color: white;
     font-size: medium;
     border-radius: 20px;
-    background-color: #1c1d21
+    background-color: #1c1d21;
 }
 
-.heading2{
+.heading2 {
     color: #fefce5;
     font-weight: 700;
     margin: 10px;
     font-size: larger;
 }
 
-.role-container .header{
+.role-container .header {
     padding-top: 10px;
     padding-bottom: 10px;
     text-align: center;
@@ -489,29 +476,29 @@ a {
 
 /*Add Shift*/
 
-.shift-container{
+.shift-container {
     background-color: #1c1d21;
     height: fit-content;
     width: auto;
     border: 5px solid #8663ac;
 }
 
-.shiftHeadings{
+.shiftHeadings {
     color:#fefce5 ;
     margin: 10px;
 }
 
-.shiftSelect{
+.shiftSelect {
     padding: 5px;
     border-radius: 10px;
     border: 5px solid #8663ac;
 }
 
-.saveShift{
+.saveShift {
     margin:10px;
 }
 
-.roleMargins{
+.roleMargins {
     margin-left: 10px;
     margin-right: 10px;
     background-color: #1c1d21;
@@ -521,331 +508,42 @@ a {
     border-radius: 5px;
 }
 
-
 #roles-container label {
     margin: 5px 0;
     font-size: medium;
     color: #fefce5;
 }
 
-.scheduleForm{
+.scheduleForm {
     display: flex;
     align-self: center;
     margin-top: 100px;
-
 }
 
-#scheduleForm{
+#scheduleForm {
     background-color: #fefce5;
-    padding: 30px;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 25px;
     border-radius: 30px;
-}
-
-.workHrsBack{
-    display: flex;
-    justify-self: center;
-    margin-top: 50px;
-}
-
-.heading-label{
-    margin-top: 15px;
-
-}
-
-/*Edit Shifts*/
-
-.extraBtns2{
-    
-    font-weight: bold;
-    background-color:#1c1d21 ;
-    border-radius: 50px;
-    transition: background-color 0.25s, color 0.25s, border 0.25s;
-    height: min-content;
-    border: 3px solid #8663ac;
-}
-
-.extraBtns2:hover{
-    color: #f0f0f0;
-    background-color: #8663bc;
-    border: 3px solid black;
-}
-
-.shiftsList{
-    display: flex;
-    flex-wrap: wrap;
-    margin-left: 30px;
-    justify-content: center;
-}
-
-.extraBtnEdit{
-    display: flex;
-    align-self: center;
-    margin-top: 150px;
-}
-
-.editShiftContainer{
-    display: flex;
-    align-self: center;
-    background-color: #fefce5;
-    padding: 30px;
-    border-radius: 20px;
     border: 5px solid #8663ac;
-}
-
-.editShiftContainer .roleType{
-    margin-bottom: 15px;
-    margin-top: 10px;
-}
-
-.editShiftContainer .extraBtns2{
-    background-color: #8663ac;
-}
-
-/*Volunteer Management*/
-
-.VMcontainer{
-    margin-left: 20px;
-    display: flex;
-    margin-bottom: 40px;
-    background-color: #1c1d21;
-    border-radius: 10px;
-}
-
-.volunteer-table{
-    width: 100%;
-    border-collapse: collapse;
-    border-radius: 15px;
-}
-
-.vmHeader{
-    
-    color: white;
-    border-right: 1px solid white ;
-    border-bottom: 1px solid white ;
-    background-color: #8663ac;
-    padding: 10px;
-}
-
-.vmHeader1{
-    width: 30%;
-}
-
-.vmHeader2{
-    width: 15%;
-}
-
-.vmBody{
-    
-    color: white;
-    border-right: 1px solid white;
-    border-bottom: 1px solid white;
-    text-align: center;
-    padding: 10px;
-}
-
-.VMcontainer .extraBtns{
-    margin-left: 5px;
-}
-
-.VM .btnMargin{
-    margin-left: 25px;
-}
-
-
-/*Volunteer Management*/
-
-.VMcontainer{
-    margin-left: 20px;
-    display: flex;
-    margin-bottom: 40px;
-    background-color: #1c1d21;
-    border-radius: 10px;
-}
-
-.volunteer-table{
-    width: 100%;
-    border-collapse: collapse;
-    border-radius: 15px;
-}
-
-.time-list {
-    padding-left: 20px;
-    list-style-type: none;
-    margin: 0;
-    text-align: left;
-}
-
-.time-list li {
-    margin-bottom: 5px;
-    font-size: 14px;
-}
-
-.roles-list {
-    padding-left: 20px;
-    list-style-type: none;
-    margin: 0;
-    text-align: left;
-}
-
-.roles-list li {
-    margin-bottom: 5px;
-    font-size: 14px;
-}
-
-.vmHeader{
-    
-    color: white;
-    border-right: 1px solid white ;
-    border-bottom: 1px solid white ;
-    background-color: #8663ac;
-    padding: 10px;
-}
-
-.vmHeader1{
-    width: 30%;
-}
-
-.vmHeader2{
-    width: 15%;
-}
-
-.vmBody{
-    
-    color: white;
-    border-right: 1px solid white;
-    text-align: center;
-    padding: 10px;
-}
-
-.VMcontainer .extraBtns{
-    margin-left: 5px;
-}
-
-.VM .btnMargin{
-    margin-left: 25px;
-}
-
-
-.gamification-container {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.image-buttons button {
-    margin: 5px;
-    padding: 10px 15px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.image-buttons button:hover {
-    background-color: #ddd;
-}
-
-/*Edit Volunteer*/
-.editVolunteer{
-    display: flex;
+    width: fit-content;
     flex-direction: column;
     align-self: center;
-    background-color: #fefce5;
-    padding: 25px;
-    border-radius: 20px;
-    border: 5px solid #8663ac;
 }
 
-.editVolunteer .extraBtns2{
-    background-color: #8663ac;
+.scheduleForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.sChanges{
-    padding: 10px;
-    width: fit-content;
-    color: white;
+.scheduleForm label {
     font-size: medium;
-    font-weight: bold;
 }
 
-/*navbar*/
-.nav-bar{
-    display: flex;
-    justify-content: space-between;
-}
-
-.logout-container{
-    margin-top: 25px;
-}
-
-.logout-btn{
-    font-size: larger;
-    text-decoration: none;
-    color: #bebfbe;
-    transition: color 0.25s;
-}
-
-.logout-btn:hover{
-    color: white;
-}
-
-/*----------------------------------------------------------*/
-
-.scheduleForm .extraBtns3{
-    background-color: #8663ac;
-    color: white;
-    transition: background-color 0.25s;
-}
-
-.form-white{
-    display: flex;
-    justify-content: center;
-    margin-top: 150px;
-}
-
-.sideBtns{
-    color: white;
-    font-weight: bold;
-    background-color: #8663ac;
-    border-radius: 50px;
-    transition: background-color 0.25s, color 0.25s;
-    height: min-content;
-}
-
-#editRoleForm .button-container{
-    margin-top: 20px;
-}
-
-#addRoleForm .button-container{
-    margin-top: 20px;
-}
-
-.schedule-cell.selected{
-    border: 2px solid #fefce5;
-    background-color: #8663ac;
-}
-
-
-/*Input References*/
-
-.inputGrid{
-    display: grid;
-}
-
-.timetable-role{
-    color: white;
-    font-weight: bolder;
-    background-color: #8663ac;
+.scheduleForm input {
     padding: 10px;
-    margin-bottom: 5px;
-    font-size: 15px;
-}
-
-.timetable-role.selected{
-    background-color: #fefce5;
-    color: #8663ac;
-    transition: color 0.25s background-color 0.25s;
-}
-
-.bold-heading{
-    color: #fefce5;
-    font-weight: bold;
-    margin-top: 50px;
+    border-radius: 10px;
+    border: 1px solid #8663ac;
 }
