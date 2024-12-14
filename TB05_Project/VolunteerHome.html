@@ -9,15 +9,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Volunteer Home</title>
     </head>
-    <header>
-        <h1>Volunteering Solutions</h1>
-    </header>
     <body>
-        <button name="ScheduleButton" type="button">Schedule</button>
-        <a href="VInputPreferences.html"><button name="VInputPreferences" type="button">Availability</button></a>
-        <a href="VFollowingWeek.html"><button name="VFollowingWeek" type="button">Next Week</button></a>
-        <h3>Schedule</h3>
-        
+        <nav class="nav-bar">
+            <header>
+                <h2 class="logoHeading"><span class="heading1">VOLUNTEERING</span> SOLUTIONS</h2>
+            </header>
+            <div class="logout-container">
+                <a href="Login.html"><button  class="extraBtns">LOG OUT</button></a>
+            </div>
+        </nav>
+        <div class="button-container">
+            <a href="VolunteerHome.html"><button name="CurrentWeekButton" type="button" class="extraBtns">Schedule</button></a>
+            <a href="VInputPreferences.html"><button name="NextWeekButton" type="button" class="extraBtns">Availability</button></a>
+        </div>
+        <div class="button-container">
+            <a href="VolunteerHome.html"><button name="CurrentWeekButton" type="button" class="extraBtns">Current Week</button></a>
+            <a href="VFollowingWeek.html"><button name="NextWeekButton" type="button" class="extraBtns">Next Week</button></a>
+        </div>
         <div class="MngHome">
             <div class="MngScedule">
                 <div class="schedule" id="schedule"></div>
@@ -39,16 +47,23 @@
         
             // Load schedule from localStorage or set default
             function loadSchedule() {
+                // Default schedule data
                 const defaultSchedule = { startHour: 8, endHour: 18 };
+        
+                // Get schedule data from localStorage
                 const scheduleData = JSON.parse(localStorage.getItem('scheduleData')) || defaultSchedule;
         
+                // Generate the schedule
                 generateSchedule(scheduleData.startHour, scheduleData.endHour);
-                assignVolunteersToShifts();
+
+                displayShifts();
             }
         
             function generateSchedule(startHour, endHour) {
+                // Clear existing schedule
                 scheduleContainer.innerHTML = '';
         
+                // Generate headers
                 const days = ["TIME/DAY", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
                 days.forEach(day => {
                     const header = document.createElement('div');
@@ -57,69 +72,73 @@
                     scheduleContainer.appendChild(header);
                 });
         
+                // Generate rows
                 for (let hour = startHour; hour < endHour; hour++) {
-                    const currentHour = `${String(hour).padStart(2, '0')}:00`;
-                    const nextHour = `${String((hour + 1) % 24).padStart(2, '0')}:00`;
+                    const currentHour = hour === 24 ? '00:00' : `${String(hour).padStart(2, '0')}:00`;
+                    const nextHour = hour + 1 === 24 ? '00:00' : `${String((hour + 1) % 24).padStart(2, '0')}:00`;
         
+                    // Add time column
                     const timeColumn = document.createElement('div');
                     timeColumn.textContent = `${currentHour}-${nextHour}`;
                     timeColumn.classList.add('time-column');
                     scheduleContainer.appendChild(timeColumn);
         
+                    // Add cells for each day
                     for (let dayIndex = 1; dayIndex < days.length; dayIndex++) {
                         const dayName = days[dayIndex];
+
                         const cell = document.createElement('div');
                         cell.classList.add('schedule-cell');
-                        cell.dataset.time = `${currentHour}-${nextHour}`;
-                        cell.dataset.day = dayName;
+                        cell.dataset.time = `${currentHour}-${nextHour}`; // Add time attribute
+                        cell.dataset.day = dayName; // Add day attribute
                         scheduleContainer.appendChild(cell);
                     }
                 }
         
+                // Apply CSS grid
                 scheduleContainer.style.gridTemplateColumns = `repeat(${days.length}, 1fr)`;
                 scheduleContainer.style.gridAutoRows = `minmax(40px, auto)`;
             }
         
-            function assignVolunteersToShifts() {
+            function displayShifts() {
                 const shifts = JSON.parse(localStorage.getItem('shifts')) || [];
-                const volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
-        
+
                 shifts.forEach(shift => {
                     const { day, time, roles } = shift;
-        
-                    // Find suitable volunteers for the shift
-                    const assignedVolunteers = volunteers.filter(volunteer =>
-                        volunteer.availability.some(avail => avail.day === day && avail.time === time) &&
-                        roles.some(role => volunteer.preferredRoles.includes(role))
-                    );
-        
-                    const [startHour, endHour] = time.split('-').map(t => parseInt(t.split(':')[0], 10));
-        
+                    const [startTime, endTime] = time.split('-');  // Split the time range into start and end
+
+                    const startHour = parseInt(startTime.split(':')[0], 10);  // Extract the start hour
+                    const endHour = parseInt(endTime.split(':')[0], 10);  // Extract the end hour
+
+                    // Loop through each hour in the range
                     for (let hour = startHour; hour < endHour; hour++) {
                         const currentTime = `${String(hour).padStart(2, '0')}:00-${String(hour + 1).padStart(2, '0')}:00`;
-        
+
+                        // Find all cells matching the shift's day and the current hour
                         const cells = Array.from(scheduleContainer.querySelectorAll('.schedule-cell')).filter(cell => {
                             return cell.dataset.day === day && cell.dataset.time === currentTime;
                         });
-        
+
+                        // Update each matching cell with the shift information
                         cells.forEach(cell => {
-                            cell.style.backgroundColor = "#1c1d21";
                             cell.style.color = "black";
                             cell.style.textAlign = "center";
-        
-                            const volunteerNames = assignedVolunteers.map(v => v.name).join(", ");
-                            cell.innerHTML = `<div><strong>Roles:</strong> ${roles.join(", ")}<br><strong>Volunteers:</strong> ${volunteerNames}</div>`;
+                            cell.style.backgroundColor = "#1c1d21";
+
+                            // Add roles as content in the cell
+                            cell.innerHTML = `<div>${roles.join(", ")}</div>`;
                         });
                     }
                 });
             }
 
-            function changeImage(imageSrc) {
-                const gamificationImage = document.getElementById('gamificationImage');
-                gamificationImage.src = imageSrc;
-            }
-        
+            // Load the schedule on page load
             document.addEventListener('DOMContentLoaded', loadSchedule);
-        </script>        
+
+            function changeImage(imagePath) {
+                const gamificationImage = document.getElementById('gamificationImage'); // Get the image element by its ID
+                gamificationImage.src = imagePath; // Update the 'src' attribute to the new image path
+            }
+        </script>   
     </body>
 </html>

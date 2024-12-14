@@ -1,18 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <link href="TB05css.css" rel="stylesheet">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Input Preferences</title>
-    </head>
-    <header>
-        <h1>Volunteering Solutions</h1>
-    </header>
-    <body>
-        <p>This is where the volunteers can accept or decline shifts.</p>
-    </body>
-    </html>
+<head>
+    <link href="TB05css.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accept or Decline Shifts</title>
+</head>
+<body>
+    <nav class="nav-bar">
+        <header>
+            <h2 class="logoHeading"><span class="heading1">VOLUNTEERING</span> SOLUTIONS</h2>
+        </header>
+        <div class="logout-container">
+            <a href="Login.html"><button  class="extraBtns">LOG OUT</button></a>
+        </div>
+    </nav>
+
+    <div class="content">
+        <h1>Select Your Name</h1>
+        <select id="volunteerSelect">
+            <option value="" disabled selected>Select your name</option>
+        </select>
+        <div id="shiftsContainer"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const volunteerSelect = document.getElementById('volunteerSelect');
+            const shiftsContainer = document.getElementById('shiftsContainer');
+            const assignedShifts = JSON.parse(localStorage.getItem('assignedShifts')) || [];
+            const volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
+
+            // Populate the dropdown with volunteer names
+            volunteers.forEach(volunteer => {
+                const option = document.createElement('option');
+                option.value = volunteer.name;
+                option.textContent = volunteer.name;
+                volunteerSelect.appendChild(option);
+            });
+
+            // Event listener for dropdown change
+            volunteerSelect.addEventListener('change', (event) => {
+                const selectedVolunteer = event.target.value;
+
+                // Filter shifts for the selected volunteer
+                const relevantShifts = assignedShifts.filter(shift => shift.volunteer === selectedVolunteer);
+
+                // Group and display relevant shifts
+                const groupedShifts = groupShiftsByDayAndRole(relevantShifts);
+                displayShifts(selectedVolunteer, groupedShifts);
+            });
+
+            // Function to group shifts by day and merge contiguous times
+            function groupShiftsByDayAndRole(shifts) {
+                const grouped = {};
+
+                shifts.forEach(shift => {
+                    const key = `${shift.day}-${shift.role}`;
+                    if (!grouped[key]) {
+                        grouped[key] = [];
+                    }
+                    grouped[key].push(shift.time);
+                });
+
+                const result = [];
+
+                for (const key in grouped) {
+                    const [day, role] = key.split('-');
+                    const times = grouped[key];
+
+                    // Sort times and merge contiguous ranges
+                    const mergedTimes = mergeTimeRanges(times);
+                    mergedTimes.forEach(timeRange => {
+                        result.push({ day, role, time: timeRange });
+                    });
+                }
+
+                return result;
+            }
+
+            // Function to merge contiguous time ranges
+            function mergeTimeRanges(times) {
+                const sortedTimes = times.map(t => t.split('-').map(parseTime)).sort((a, b) => a[0] - b[0]);
+
+                const merged = [];
+                let currentStart = sortedTimes[0][0];
+                let currentEnd = sortedTimes[0][1];
+
+                for (let i = 1; i < sortedTimes.length; i++) {
+                    const [start, end] = sortedTimes[i];
+
+                    if (start <= currentEnd) {
+                        // Extend the current range
+                        currentEnd = Math.max(currentEnd, end);
+                    } else {
+                        // Add the current range and start a new one
+                        merged.push(formatTimeRange(currentStart, currentEnd));
+                        currentStart = start;
+                        currentEnd = end;
+                    }
+                }
+
+                // Add the final range
+                merged.push(formatTimeRange(currentStart, currentEnd));
+
+                return merged;
+            }
+
+            // Parse time string (e.g., "8:00") to minutes since midnight
+            function parseTime(timeStr) {
+                const [hours, minutes] = timeStr.split(':').map(Number);
+                return hours * 60 + minutes;
+            }
+
+            // Format time range from minutes since midnight
+            function formatTimeRange(start, end) {
+                return `${formatTime(start)}-${formatTime(end)}`;
+            }
+
+            // Format minutes since midnight back to "HH:mm" time string
+            function formatTime(minutes) {
+                const hours = Math.floor(minutes / 60);
+                const mins = minutes % 60;
+                return `${hours}:${mins.toString().padStart(2, '0')}`;
+            }
+
+            // Function to display grouped shifts
+            function displayShifts(volunteer, shifts) {
+                shiftsContainer.innerHTML = ''; // Clear previous shifts
+
+                if (shifts.length === 0) {
+                    shiftsContainer.innerHTML = `<p>No shifts assigned to ${volunteer}.</p>`;
+                    return;
+                }
+
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <tr>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
+                `;
+
+                shifts.forEach(shift => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                        <td>${shift.day}</td>
+                        <td>${shift.time}</td>
+                        <td>${shift.role}</td>
+                        <td>
+                            <button class="acceptBtn">Accept</button>
+                            <button class="declineBtn">Decline</button>
+                        </td>
+                    `;
+
+                    // Event listeners for Accept/Decline buttons
+                    row.querySelector('.acceptBtn').addEventListener('click', () => {
+                        alert(`Shift accepted: ${shift.role} on ${shift.day} at ${shift.time}`);
+                    });
+
+                    row.querySelector('.declineBtn').addEventListener('click', () => {
+                        alert(`Shift declined: ${shift.role} on ${shift.day} at ${shift.time}`);
+                    });
+
+                    table.appendChild(row);
+                });
+
+                shiftsContainer.appendChild(table);
+            }
+        });
+    </script>
+    <a href="VFollowingWeek.html"><button name="BackToVolunteerFollowing" type="button" class="extraBtns">Go Back</button></a>
+</body>
+</html>
