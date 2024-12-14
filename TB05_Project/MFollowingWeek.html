@@ -51,8 +51,8 @@
 
         function generateSchedule(shifts, volunteers) {
             const schedule = [];
+            const existingAssignedShifts = JSON.parse(localStorage.getItem('assignedShifts')) || [];
 
-            // Group shifts by day
             const shiftsByDay = shifts.reduce((acc, shift) => {
                 const { day } = shift;
                 if (!acc[day]) acc[day] = [];
@@ -60,61 +60,64 @@
                 return acc;
             }, {});
 
-            // Iterate over each day
             Object.keys(shiftsByDay).forEach(day => {
                 const shiftsForDay = shiftsByDay[day];
                 const assignedVolunteers = {};
 
-                // Iterate over all roles for the day
                 shiftsForDay.flatMap(shift => shift.roles).forEach(role => {
                     if (!assignedVolunteers[role]) {
-                        // Filter eligible volunteers for this role
                         const eligibleVolunteers = volunteers.filter(volunteer => {
                             return (
-                                volunteer.roles.includes(role) && // Can perform this role
-                                volunteer.time.some(timeSlot => timeSlot.startsWith(day)) // Available on this day
+                                volunteer.roles.includes(role) &&
+                                volunteer.time.some(timeSlot => timeSlot.startsWith(day))
                             );
                         });
 
                         if (eligibleVolunteers.length > 0) {
-                            // Randomly select one volunteer for the role
                             const randomIndex = Math.floor(Math.random() * eligibleVolunteers.length);
                             const selectedVolunteer = eligibleVolunteers[randomIndex];
 
-                            // Assign the volunteer for this role
                             assignedVolunteers[role] = selectedVolunteer.name;
-
-                            // Remove the day's availability for the selected volunteer to avoid overlap
                             selectedVolunteer.time = selectedVolunteer.time.filter(
                                 timeSlot => !timeSlot.startsWith(day)
                             );
                         } else {
-                            // No available volunteer for this role
                             assignedVolunteers[role] = 'Unassigned';
                         }
                     }
                 });
 
-                // Assign volunteers to each shift for the day based on the role
                 shiftsForDay.forEach(shift => {
                     const { time, roles } = shift;
 
                     roles.forEach(role => {
-                        schedule.push({
-                            day,
-                            time,
-                            role,
-                            volunteer: assignedVolunteers[role]
-                        });
+                        const existingShift = existingAssignedShifts.find(existing =>
+                            existing.day === day &&
+                            existing.time === time &&
+                            existing.role === role
+                        );
+
+                        if (existingShift && existingShift.confirmed) {
+                            // Use confirmed shift
+                            schedule.push(existingShift);
+                        } else {
+                            // Generate a new shift
+                            schedule.push({
+                                day,
+                                time,
+                                role,
+                                volunteer: assignedVolunteers[role],
+                                confirmed: false
+                            });
+                        }
                     });
                 });
             });
 
-            // Save the generated schedule to localStorage
             localStorage.setItem('assignedShifts', JSON.stringify(schedule));
-
             return schedule;
         }
+
 
         function displaySchedule(schedule) {
             const scheduleContainer = document.getElementById('schedule');
