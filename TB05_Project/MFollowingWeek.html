@@ -1,16 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Following Week</title>
-    <link rel="stylesheet" href="TB05css.css">
+    <link href="TB05css.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Following Week</title>
 </head>
 <body>
-    <p>This is where the Following Week page will be</p>
-    <a href="MEditFollowingWeek.html">Edit Following Week</a>
+    <nav class="nav-bar">
+        <header>
+            <h2 class="logoHeading"><span class="heading1">VOLUNTEERING</span> SOLUTIONS</h2>
+        </header>
+        <div class="logout-container">
+            <a href="Login.html"><button  class="extraBtns">LOG OUT</button></a>
+        </div>
+    </nav>
+    <div class="button-container">
+        <a href="ManagementHome.html"><button name="CurrentWeekButton" type="button" class="extraBtns">Current Week</button></a>
+        <a href="MFollowingWeek.html"><button name="NextWeekButton" type="button" class="extraBtns">Next Week</button></a>
+    </div>
+    
+    <!-- Schedule container -->
+    <div id="schedule"></div>
+
+    <!-- Navigation buttons -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        // Check if assigned shifts already exist in localStorage
+        const existingAssignedShifts = localStorage.getItem('assignedShifts');
+
+        if (existingAssignedShifts) {
+            // Load and display the existing schedule
+            const assignedShifts = JSON.parse(existingAssignedShifts);
+            displaySchedule(assignedShifts);
+            console.log('Loaded existing assigned shifts:', assignedShifts);
+        } else {
+            // No assigned shifts found, generate a new schedule
+            const shifts = JSON.parse(localStorage.getItem('shifts')) || [];
+            const volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
+
+            // Generate the schedule and save it to localStorage
+            const newSchedule = generateSchedule(shifts, volunteers);
+            displaySchedule(newSchedule);
+            console.log('Generated new schedule:', newSchedule);
+        }
+        });
+
+        function generateSchedule(shifts, volunteers) {
+            const schedule = [];
+            const existingAssignedShifts = JSON.parse(localStorage.getItem('assignedShifts')) || [];
+
+            const shiftsByDay = shifts.reduce((acc, shift) => {
+                const { day } = shift;
+                if (!acc[day]) acc[day] = [];
+                acc[day].push(shift);
+                return acc;
+            }, {});
+
+            Object.keys(shiftsByDay).forEach(day => {
+                const shiftsForDay = shiftsByDay[day];
+                const assignedVolunteers = {};
+
+                shiftsForDay.flatMap(shift => shift.roles).forEach(role => {
+                    if (!assignedVolunteers[role]) {
+                        const eligibleVolunteers = volunteers.filter(volunteer => {
+                            return (
+                                volunteer.roles.includes(role) &&
+                                volunteer.time.some(timeSlot => timeSlot.startsWith(day))
+                            );
+                        });
+
+                        if (eligibleVolunteers.length > 0) {
+                            const randomIndex = Math.floor(Math.random() * eligibleVolunteers.length);
+                            const selectedVolunteer = eligibleVolunteers[randomIndex];
+
+                            assignedVolunteers[role] = selectedVolunteer.name;
+                            selectedVolunteer.time = selectedVolunteer.time.filter(
+                                timeSlot => !timeSlot.startsWith(day)
+                            );
+                        } else {
+                            assignedVolunteers[role] = 'Unassigned';
+                        }
+                    }
+                });
+
+                shiftsForDay.forEach(shift => {
+                    const { time, roles } = shift;
+
+                    roles.forEach(role => {
+                        const existingShift = existingAssignedShifts.find(existing =>
+                            existing.day === day &&
+                            existing.time === time &&
+                            existing.role === role
+                        );
+
+                        if (existingShift && existingShift.confirmed) {
+                            // Use confirmed shift
+                            schedule.push(existingShift);
+                        } else {
+                            // Generate a new shift
+                            schedule.push({
+                                day,
+                                time,
+                                role,
+                                volunteer: assignedVolunteers[role],
+                                confirmed: false
+                            });
+                        }
+                    });
+                });
+            });
+
+            localStorage.setItem('assignedShifts', JSON.stringify(schedule));
+            return schedule;
+        }
+
+
+        function displaySchedule(schedule) {
+            const scheduleContainer = document.getElementById('schedule');
+            scheduleContainer.innerHTML = '';
+
+            // Extract unique days and times from the schedule
+            const days = [...new Set(schedule.map(entry => entry.day))];
+            const times = [...new Set(schedule.map(entry => entry.time))].sort();
+
+            // Create the table
+            const table = document.createElement('table');
+            const headerRow = document.createElement('tr');
+
+            // Add an empty header for the top-left corner
+            const emptyHeader = document.createElement('th');
+            emptyHeader.textContent = '';
+            headerRow.appendChild(emptyHeader);
+
+            // Add headers for each day (columns)
+            days.forEach(day => {
+                const dayHeader = document.createElement('th');
+                dayHeader.textContent = day;
+                headerRow.appendChild(dayHeader);
+            });
+
+            table.appendChild(headerRow);
+
+            // Create rows for each time slot
+            times.forEach(time => {
+                const row = document.createElement('tr');
+
+                // Add a header cell for the time (row labels)
+                const timeCell = document.createElement('td');
+                timeCell.textContent = time;
+                row.appendChild(timeCell);
+
+                // Add cells for each day
+                days.forEach(day => {
+                    const cell = document.createElement('td');
+
+                    // Filter the schedule for entries matching this day and time
+                    const shifts = schedule.filter(entry => entry.day === day && entry.time === time);
+
+                    if (shifts.length > 0) {
+                        // Add roles and assigned volunteers to the cell
+                        shifts.forEach(shift => {
+                            const roleAndVolunteer = `<strong>${shift.role}</strong>: ${shift.volunteer}<br>`;
+                            cell.innerHTML += roleAndVolunteer;
+                        });
+                    } else {
+                        cell.textContent = ''; // No shifts for this time and day
+                    }
+
+                    row.appendChild(cell);
+                });
+
+                table.appendChild(row);
+            });
+
+            scheduleContainer.appendChild(table);
+        }
+
+
+    </script>
+    <a href="MEditFollowingWeek.html"><button id="editSchedule" class="extraBtns">Edit Assigned Shifts</button></a>
+    <h3 class="heading2">If there are changes to volunteers, roles, or shift patterns, reset current assigned shifts below:</h3>
+    <button id="clearSchedule" class="extraBtns">Refresh Assigned Shifts</button>
+    <script>
+        document.getElementById('clearSchedule').addEventListener('click', () => {
+            localStorage.removeItem('assignedShifts');
+            location.reload();
+        });
+    </script>
 </body>
 </html>

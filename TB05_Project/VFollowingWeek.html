@@ -10,108 +10,165 @@
     <title>Following Week</title>
 </head>
 <body>
-    <header>
-        <h1>Volunteering Solutions</h1>
-    </header>
+    <nav class="nav-bar">
+        <header>
+            <h2 class="logoHeading"><span class="heading1">VOLUNTEERING</span> SOLUTIONS</h2>
+        </header>
+        <div class="logout-container">
+            <a href="Login.html"><button  class="extraBtns">LOG OUT</button></a>
+        </div>
+    </nav>
+    <div class="button-container">
+        <a href="VolunteerHome.html"><button name="CurrentWeekButton" type="button" class="extraBtns">Current Week</button></a>
+        <a href="VFollowingWeek.html"><button name="NextWeekButton" type="button" class="extraBtns">Next Week</button></a>
+    </div>
 
     <!-- Schedule container -->
     <div id="schedule"></div>
 
     <!-- Navigation buttons -->
-    <a href="VAcceptDeclineShift.html"><button name="VAcceptDeclineShift" type="button">Accept or Decline Shift</button></a>
+    <a href="VAcceptDeclineShift.html"><button name="VAcceptDeclineShift" type="button" class="extraBtns">Accept or Decline Shift</button></a>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Retrieve data from localStorage
+            console.log('Page loaded.');
+
+            // Check if a schedule already exists in localStorage
+            const existingSchedule = localStorage.getItem('schedule');
             const shifts = JSON.parse(localStorage.getItem('shifts')) || [];
             const volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
-        
-            // Generate the schedule
-            const schedule = generateSchedule(shifts, volunteers);
-        
-            // Display the schedule in a table
-            displaySchedule(schedule);
+
+            console.log('Loaded shifts:', shifts);
+            console.log('Loaded volunteers:', volunteers);
+
+            if (existingSchedule) {
+                const schedule = JSON.parse(existingSchedule);
+                console.log('Loaded existing schedule:', schedule);
+                displaySchedule(schedule);
+            } else if (shifts.length > 0 && volunteers.length > 0) {
+                const newSchedule = generateSchedule(shifts, volunteers);
+                console.log('Generated new schedule:', newSchedule);
+                displaySchedule(newSchedule);
+            } else {
+                console.error('Missing shifts or volunteers data.');
+            }
         });
-        
+
         function generateSchedule(shifts, volunteers) {
             const schedule = [];
-        
-            // Sort volunteers alphabetically by name
-            volunteers.sort((a, b) => a.name.localeCompare(b.name));
-        
-            // Iterate over each shift to assign volunteers
-            shifts.forEach(shift => {
-                const { day, time, roles } = shift;
-        
-                roles.forEach(role => {
-                    // Find the first eligible volunteer
-                    const eligibleVolunteer = volunteers.find(volunteer => {
-                        return (
-                            volunteer.roles.includes(role) && // Volunteer can perform the role
-                            volunteer.time.includes(`${day} ${time}`) // Volunteer is available
-                        );
-                    });
-        
-                    // If a volunteer is found, assign them to the shift
-                    if (eligibleVolunteer) {
-                        schedule.push({
-                            day,
-                            time,
-                            role,
-                            volunteer: eligibleVolunteer.name
+            const shiftsByDay = shifts.reduce((acc, shift) => {
+                const { day } = shift;
+                if (!acc[day]) acc[day] = [];
+                acc[day].push(shift);
+                return acc;
+            }, {});
+
+            Object.keys(shiftsByDay).forEach(day => {
+                const shiftsForDay = shiftsByDay[day];
+                const assignedVolunteers = {};
+
+                shiftsForDay.flatMap(shift => shift.roles).forEach(role => {
+                    if (!assignedVolunteers[role]) {
+                        const eligibleVolunteers = volunteers.filter(volunteer => {
+                            // Normalize `time` to always be an array
+                            let availableTimes = Array.isArray(volunteer.time) 
+                                ? volunteer.time 
+                                : volunteer.time.split(','); // Convert string to array
+
+                            // Check if volunteer is eligible for the day and time
+                            return volunteer.roles.includes(role) &&
+                                availableTimes.some(timeSlot => timeSlot.startsWith(day));
                         });
-        
-                        // Remove this time slot from the volunteer's availability to prevent double booking
-                        eligibleVolunteer.time = eligibleVolunteer.time.filter(
-                            avail => avail !== `${day} ${time}`
-                        );
-                    } else {
-                        // No volunteer available for this role
-                        schedule.push({
-                            day,
-                            time,
-                            role,
-                            volunteer: 'Unassigned'
-                        });
+
+                        if (eligibleVolunteers.length > 0) {
+                            const randomIndex = Math.floor(Math.random() * eligibleVolunteers.length);
+                            const selectedVolunteer = eligibleVolunteers[randomIndex];
+                            assignedVolunteers[role] = selectedVolunteer.name;
+
+                            // Remove assigned time slot from volunteer's availability
+                            let updatedTimes = Array.isArray(selectedVolunteer.time) 
+                                ? selectedVolunteer.time 
+                                : selectedVolunteer.time.split(',');
+
+                            selectedVolunteer.time = updatedTimes.filter(
+                                timeSlot => !timeSlot.startsWith(day)
+                            );
+                        } else {
+                            assignedVolunteers[role] = 'Unassigned';
+                        }
                     }
                 });
+
+                shiftsForDay.forEach(shift => {
+                    const { time, roles } = shift;
+                    roles.forEach(role => {
+                        schedule.push({ day, time, role, volunteer: assignedVolunteers[role] });
+                    });
+                });
             });
-        
+
+            localStorage.setItem('schedule', JSON.stringify(schedule));
             return schedule;
         }
-        
+
+
         function displaySchedule(schedule) {
             const scheduleContainer = document.getElementById('schedule');
             scheduleContainer.innerHTML = '';
-        
-            // Create a table to display the schedule
+
+            if (!schedule || schedule.length === 0) {
+                scheduleContainer.innerHTML = '<p>No schedule available.</p>';
+                return;
+            }
+
             const table = document.createElement('table');
             const headerRow = document.createElement('tr');
-        
-            // Add table headers
-            ['Day', 'Time', 'Role', 'Volunteer'].forEach(headerText => {
-                const header = document.createElement('th');
-                header.textContent = headerText;
-                headerRow.appendChild(header);
+
+            const emptyHeader = document.createElement('th');
+            emptyHeader.textContent = '';
+            headerRow.appendChild(emptyHeader);
+
+            const days = [...new Set(schedule.map(entry => entry.day))];
+            days.forEach(day => {
+                const dayHeader = document.createElement('th');
+                dayHeader.textContent = day;
+                headerRow.appendChild(dayHeader);
             });
-        
+
             table.appendChild(headerRow);
-        
-            // Add schedule rows
-            schedule.forEach(entry => {
+
+            const times = [...new Set(schedule.map(entry => entry.time))].sort();
+            times.forEach(time => {
                 const row = document.createElement('tr');
-        
-                ['day', 'time', 'role', 'volunteer'].forEach(key => {
+                const timeCell = document.createElement('td');
+                timeCell.textContent = time;
+                row.appendChild(timeCell);
+
+                days.forEach(day => {
                     const cell = document.createElement('td');
-                    cell.textContent = entry[key];
+                    const shifts = schedule.filter(entry => entry.day === day && entry.time === time);
+                    if (shifts.length > 0) {
+                        shifts.forEach(shift => {
+                            cell.innerHTML += `<strong>${shift.role}</strong>: ${shift.volunteer}<br>`;
+                        });
+                    }
                     row.appendChild(cell);
                 });
-        
+
                 table.appendChild(row);
             });
-        
+
             scheduleContainer.appendChild(table);
         }
     </script>
 
+    <h3 class="heading2">If there are changes to volunteers, roles, or shift patterns, reset current schedule below:</h3>
+    <button id="clearSchedule" class="extraBtns">Refresh Assigned Schedule</button>
+    <script>
+        document.getElementById('clearSchedule').addEventListener('click', () => {
+            localStorage.removeItem('schedule');
+            location.reload();
+        });
+    </script>
 </body>
 </html>

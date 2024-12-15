@@ -28,7 +28,7 @@ input {
 
 /*This is all the css for login page*/
 .login{
-    
+
     position: absolute;
     top: 50%;
     left: 50%;
@@ -352,7 +352,7 @@ a {
     display: flex;
     flex-direction: column;
     background-color: #313537;
-    
+
 }
 .button-container{
     display: flex;
@@ -435,7 +435,7 @@ a {
 /*MShiftManagement*/
 .ManagementBtns .extraBtns{
     margin-left: 5px;
-    
+
 }
 
 .ManagementBtns{
@@ -451,7 +451,7 @@ a {
 
 .btnMargin{
     margin-top: 15px;
-    
+
 }
 
 .roleMng-container{
@@ -555,7 +555,7 @@ a {
 /*Edit Shifts*/
 
 .extraBtns2{
-    
+
     font-weight: bold;
     background-color:#1c1d21 ;
     border-radius: 50px;
@@ -618,7 +618,7 @@ a {
 }
 
 .vmHeader{
-    
+
     color: white;
     border-right: 1px solid white ;
     border-bottom: 1px solid white ;
@@ -635,7 +635,7 @@ a {
 }
 
 .vmBody{
-    
+
     color: white;
     border-right: 1px solid white;
     border-bottom: 1px solid white;
@@ -668,8 +668,29 @@ a {
     border-radius: 15px;
 }
 
+.time-list {
+    padding-left: 20px;
+    list-style-type: none;
+    margin: 0;
+    text-align: left;
+}
+.time-list li {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+.roles-list {
+    padding-left: 20px;
+    list-style-type: none;
+    margin: 0;
+    text-align: left;
+}
+.roles-list li {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
 .vmHeader{
-    
+
     color: white;
     border-right: 1px solid white ;
     border-bottom: 1px solid white ;
@@ -686,7 +707,7 @@ a {
 }
 
 .vmBody{
-    
+
     color: white;
     border-right: 1px solid white;
     text-align: center;

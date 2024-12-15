@@ -29,7 +29,7 @@
         </select>
     
         <h3 class="heading2">Select Your Roles and Availability</h3>
-        <h4 class="heading2">Click on the cells to select which times you are available to work</h4>
+        <h3 class="heading2">Click on the cells to select which times you are available to work</h3>
     
         <!-- Schedule Grid -->
         <div class="inputGrid">
@@ -37,6 +37,7 @@
             <!-- Role Selection -->
             <div>
                 <h3 class="heading2">Select Roles:</h3>
+                <h3 class="heading2">Purple = Unselected, White = Selected</h3>
                 <div id="roleList" class="role-list"></div>
                 <!-- Submit Button -->
                 <div class="button-container"><button id="submit" class="extraBtns">Submit Preferences</button></div>
@@ -180,41 +181,40 @@
             }
     
             // Handle form submission
-            // Handle form submission
-submitButton.addEventListener('click', () => {
-    const selectedVolunteerName = volunteerSelect.value;
-    if (!selectedVolunteerName) {
-        alert('Please select a volunteer!');
-        return;
-    }
+            submitButton.addEventListener('click', () => {
+                const selectedVolunteerName = volunteerSelect.value;
+                if (!selectedVolunteerName) {
+                    alert('Please select a volunteer!');
+                    return;
+                }
 
-    // Find the selected volunteer in localStorage
-    const volunteerIndex = volunteers.findIndex(v => v.name === selectedVolunteerName);
-    if (volunteerIndex === -1) {
-        alert('Selected volunteer not found in storage!');
-        return;
-    }
+                // Find the selected volunteer in localStorage
+                const volunteerIndex = volunteers.findIndex(v => v.name === selectedVolunteerName);
+                if (volunteerIndex === -1) {
+                    alert('Selected volunteer not found in storage!');
+                    return;
+                }
 
-    // Update the volunteer's time and roles
-    const selectedVolunteer = volunteers[volunteerIndex];
+                // Update the volunteer's time and roles
+                const selectedVolunteer = volunteers[volunteerIndex];
 
-    // Generate the preferences array for time as a list of strings
-    const preferences = Object.keys(selectedTimes).map(key => {
-        const [day, time] = key.split('|');
-        return `${day} ${time}`; // Combine day and time into a string
-    });
+                // Generate the preferences array for time as a list of strings
+                const preferences = Object.keys(selectedTimes).map(key => {
+                    const [day, time] = key.split('|');
+                    return `${day} ${time}`; // Combine day and time into a string
+                });
 
-    // Update the 'time' field: an array of strings
-    selectedVolunteer.time = preferences; // Array of strings with combined day and time
+                // Update the 'time' field: an array of strings
+                selectedVolunteer.time = preferences; // Array of strings with combined day and time
 
-    // Update the 'roles' field (as a string, you can customize how you want to save roles)
-    selectedVolunteer.roles = selectedRoles.join(', '); // Store selected roles as a comma-separated string
+                // Update the 'roles' field (as a string, you can customize how you want to save roles)
+                selectedVolunteer.roles = selectedRoles.join(', '); // Store selected roles as a comma-separated string
 
-    // Save the updated volunteers list back to localStorage
-    localStorage.setItem('volunteers', JSON.stringify(volunteers));
+                // Save the updated volunteers list back to localStorage
+                localStorage.setItem('volunteers', JSON.stringify(volunteers));
 
-    alert('Preferences updated successfully for ' + selectedVolunteer.name);
-});
+                alert('Preferences updated successfully for ' + selectedVolunteer.name);
+            });
 
     
             // Initialize the page

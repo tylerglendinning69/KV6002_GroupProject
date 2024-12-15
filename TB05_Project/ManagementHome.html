@@ -15,14 +15,15 @@
                 <h2 class="logoHeading"><span class="heading1">VOLUNTEERING</span> SOLUTIONS</h2>
             </header>
             <div class="logout-container">
-                <a href="Login.html"><button  class="extraBtns">LOG OUT</button></a>
+                <a href="Login.html"><button class="extraBtns">LOG OUT</button></a>
             </div>
         </nav>
         
         <div class="button-container">
-            <button name="ScheduleButton" type="button" class="extraBtns">Current Week</button>
-            <button name="AvailabilityButton" type="button" class="extraBtns">Next Week</button>
+            <a href="ManagementHome.html"><button name="CurrentWeekButton" type="button" class="extraBtns">Current Week</button></a>
+            <a href="MFollowingWeek.html"><button name="NextWeekButton" type="button" class="extraBtns">Next Week</button></a>
         </div>
+        
         <div class="MngHome">
             <div class="MngScedule">
                 <div class="schedule" id="schedule"></div>
@@ -34,6 +35,7 @@
                 <a href="MShiftManagement.html"><button name="BlockTimeFrame" type="button" class="MngFeatureBtns">Shift Management</button></a>
             </div>
         </div>
+        
         <div class="footer">
             <p class="footer-content"> <span class="fcontent">CONTACT US:</span>  TB05.johndoe69@gmail.com , +44 6969696969</p>
         </div>
@@ -68,7 +70,7 @@
                     scheduleContainer.appendChild(header);
                 });
         
-                // Generate rows
+                // Generate rows for time slots
                 for (let hour = startHour; hour < endHour; hour++) {
                     const currentHour = hour === 24 ? '00:00' : `${String(hour).padStart(2, '0')}:00`;
                     const nextHour = hour + 1 === 24 ? '00:00' : `${String((hour + 1) % 24).padStart(2, '0')}:00`;
@@ -91,39 +93,80 @@
                     }
                 }
         
-                // Apply CSS grid
+                // Apply CSS grid layout
                 scheduleContainer.style.gridTemplateColumns = `repeat(${days.length}, 1fr)`;
                 scheduleContainer.style.gridAutoRows = `minmax(40px, auto)`;
             }
         
             function displayShifts() {
-                const shifts = JSON.parse(localStorage.getItem('shifts')) || [];
-
-                shifts.forEach(shift => {
-                    const { day, time, roles } = shift;
-                    const [startTime, endTime] = time.split('-');  // Split the time range into start and end
-
-                    const startHour = parseInt(startTime.split(':')[0], 10);  // Extract the start hour
-                    const endHour = parseInt(endTime.split(':')[0], 10);  // Extract the end hour
-
-                    // Loop through each hour in the range
+                const schedule = JSON.parse(localStorage.getItem('schedule')) || [];
+                const volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
+        
+                schedule.forEach(entry => {
+                    const { day, time, role, volunteer } = entry;
+                    const [startTime, endTime] = time.split('-');
+        
+                    const startHour = parseInt(startTime.split(':')[0], 10);
+                    const endHour = parseInt(endTime.split(':')[0], 10);
+        
                     for (let hour = startHour; hour < endHour; hour++) {
                         const currentTime = `${String(hour).padStart(2, '0')}:00-${String(hour + 1).padStart(2, '0')}:00`;
 
-                        // Find all cells matching the shift's day and the current hour
                         const cells = Array.from(scheduleContainer.querySelectorAll('.schedule-cell')).filter(cell => {
                             return cell.dataset.day === day && cell.dataset.time === currentTime;
                         });
 
-                        // Update each matching cell with the shift information
                         cells.forEach(cell => {
-                            cell.style.backgroundColor = "#fefce5"; // Light blue color to represent the shift
-                            cell.style.color = "black";
-                            cell.style.textAlign = "center";
-                            cell.style.backgroundColor = "#1c1d21";
+                            // Create a container for role and volunteer
+                            const shiftInfo = document.createElement('div');
+                            shiftInfo.classList.add('shift-info');
+                            shiftInfo.innerHTML = `<strong>${role}</strong>: ${volunteer || 'Unassigned'}`;
 
-                            // Add roles as content in the cell
-                            cell.innerHTML = `<div>${roles.join(", ")}</div>`;
+                            // Create a dropdown for volunteer selection (only showing arrow)
+                            const selectWrapper = document.createElement('div');
+                            selectWrapper.classList.add('select-wrapper');
+                            const selectElement = document.createElement('select');
+                            selectElement.classList.add('volunteer-select');
+                            selectElement.style.display = 'none'; // Initially hide the dropdown
+
+                            const defaultOption = document.createElement('option');
+                            defaultOption.textContent = volunteer || 'Select a volunteer';
+                            selectElement.appendChild(defaultOption);
+                            
+                            // Add all volunteers to the dropdown
+                            volunteers.forEach(vol => {
+                                const option = document.createElement('option');
+                                option.value = vol.name;
+                                option.textContent = vol.name;
+                                selectElement.appendChild(option);
+                            });
+
+                            selectWrapper.appendChild(selectElement);
+                            cell.innerHTML = ''; // Clear previous content
+                            cell.appendChild(shiftInfo);
+                            cell.appendChild(selectWrapper);
+
+                            // When the shift info is clicked, show the dropdown
+                            shiftInfo.addEventListener('click', () => {
+                                selectElement.style.display = 'inline-block'; // Show the dropdown
+                            });
+
+                            // When a new volunteer is selected, update localStorage and the shift
+                            selectElement.addEventListener('change', (e) => {
+                                const selectedVolunteer = e.target.value;
+                                
+                                // Update the schedule entry in localStorage
+                                entry.volunteer = selectedVolunteer;
+
+                                // Save updated schedule back to localStorage
+                                localStorage.setItem('schedule', JSON.stringify(schedule));
+                                
+                                // Update the shift info to reflect the selected volunteer
+                                shiftInfo.innerHTML = `<strong>${role}</strong>: ${selectedVolunteer}`;
+                                
+                                // Hide the dropdown after selection
+                                selectElement.style.display = 'none';
+                            });
                         });
                     }
                 });
@@ -132,7 +175,5 @@
             // Load the schedule on page load
             document.addEventListener('DOMContentLoaded', loadSchedule);
         </script>
-        
-
     </body>
 </html>
