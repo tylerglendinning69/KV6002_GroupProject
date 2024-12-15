@@ -10,16 +10,27 @@
         <title>Add Volunteer</title>
     </head>
     <body>
-        <h1>Volunteering Solutions</h1>
-        <form id="addVolunteerForm">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" placeholder="Enter volunteer's name" required>
+        <nav class="nav-bar">
+            <header>
+                <h2 class="logoHeading"><span class="heading1">VOLUNTEERING</span> SOLUTIONS</h2>
+            </header>
+            <div class="logout-container">
+                <a href="Login.html"><button  class="extraBtns">LOG OUT</button></a>
+            </div>
+        </nav>
+        
+        <div class="login">
+            <form id="addVolunteerForm">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter volunteer's name" class="roleType" required>
             
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Enter volunteer's email" required>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter volunteer's email" class="roleType" required>
             
-            <input type="submit" value="Submit">
-        </form>
+                <button type="submit" value="submit" class="sideBtns">Submit</button>
+                <a href="MVolunteerManagement.html"><button name="BackToVolunteer" type="button" class="sideBtns">Cancel</button></a>
+            </form>
+        </div>
     
         <script>
             // Save volunteer to localStorage on form submission
@@ -48,6 +59,6 @@
                 window.location.href = "MVolunteerManagement.html"; // Redirect back to management page
             });
         </script>
-        <a href="MVolunteerManagement.html"><button name="BackToVolunteer" type="button">Cancel</button></a>
+        
     </body>
 </html>
