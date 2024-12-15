@@ -35,7 +35,7 @@
                 <a href="MShiftManagement.html"><button name="BlockTimeFrame" type="button" class="MngFeatureBtns">Shift Management</button></a>
             </div>
         </div>
-        
+        <h2 class="logoHeading">To edit who is assigned to a shift, click on their name!</h2>
         <div class="footer">
             <p class="footer-content"> <span class="fcontent">CONTACT US:</span>  TB05.johndoe69@gmail.com , +44 6969696969</p>
         </div>
@@ -101,76 +101,82 @@
             function displayShifts() {
                 const schedule = JSON.parse(localStorage.getItem('schedule')) || [];
                 const volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
-        
+
                 schedule.forEach(entry => {
                     const { day, time, role, volunteer } = entry;
                     const [startTime, endTime] = time.split('-');
-        
+
                     const startHour = parseInt(startTime.split(':')[0], 10);
                     const endHour = parseInt(endTime.split(':')[0], 10);
-        
+
                     for (let hour = startHour; hour < endHour; hour++) {
                         const currentTime = `${String(hour).padStart(2, '0')}:00-${String(hour + 1).padStart(2, '0')}:00`;
 
+                        // Select cells that match the day and time
                         const cells = Array.from(scheduleContainer.querySelectorAll('.schedule-cell')).filter(cell => {
                             return cell.dataset.day === day && cell.dataset.time === currentTime;
                         });
 
                         cells.forEach(cell => {
-                            // Create a container for role and volunteer
-                            const shiftInfo = document.createElement('div');
-                            shiftInfo.classList.add('shift-info');
-                            shiftInfo.innerHTML = `<strong>${role}</strong>: ${volunteer || 'Unassigned'}`;
+                            // Clear the cell before populating it
+                            cell.innerHTML = '';
 
-                            // Create a dropdown for volunteer selection (only showing arrow)
-                            const selectWrapper = document.createElement('div');
-                            selectWrapper.classList.add('select-wrapper');
-                            const selectElement = document.createElement('select');
-                            selectElement.classList.add('volunteer-select');
-                            selectElement.style.display = 'none'; // Initially hide the dropdown
+                            // Find all shifts for this time and day
+                            const shifts = schedule.filter(s => s.day === day && s.time === currentTime);
 
-                            const defaultOption = document.createElement('option');
-                            defaultOption.textContent = volunteer || 'Select a volunteer';
-                            selectElement.appendChild(defaultOption);
-                            
-                            // Add all volunteers to the dropdown
-                            volunteers.forEach(vol => {
-                                const option = document.createElement('option');
-                                option.value = vol.name;
-                                option.textContent = vol.name;
-                                selectElement.appendChild(option);
-                            });
+                            shifts.forEach(shift => {
+                                // Create a container for the shift info
+                                const shiftInfo = document.createElement('div');
+                                shiftInfo.classList.add('shift-info');
+                                shiftInfo.innerHTML = `<strong>${shift.role}</strong>: ${shift.volunteer || 'Unassigned'}`;
 
-                            selectWrapper.appendChild(selectElement);
-                            cell.innerHTML = ''; // Clear previous content
-                            cell.appendChild(shiftInfo);
-                            cell.appendChild(selectWrapper);
+                                // Add a dropdown for volunteer selection
+                                const selectWrapper = document.createElement('div');
+                                selectWrapper.classList.add('select-wrapper');
+                                const selectElement = document.createElement('select');
+                                selectElement.classList.add('volunteer-select');
+                                selectElement.style.display = 'none'; // Initially hidden
 
-                            // When the shift info is clicked, show the dropdown
-                            shiftInfo.addEventListener('click', () => {
-                                selectElement.style.display = 'inline-block'; // Show the dropdown
-                            });
+                                // Default option
+                                const defaultOption = document.createElement('option');
+                                defaultOption.textContent = 'Select a volunteer';
+                                selectElement.appendChild(defaultOption);
 
-                            // When a new volunteer is selected, update localStorage and the shift
-                            selectElement.addEventListener('change', (e) => {
-                                const selectedVolunteer = e.target.value;
-                                
-                                // Update the schedule entry in localStorage
-                                entry.volunteer = selectedVolunteer;
+                                // Populate the dropdown with volunteers
+                                volunteers.forEach(vol => {
+                                    const option = document.createElement('option');
+                                    option.value = vol.name;
+                                    option.textContent = vol.name;
+                                    selectElement.appendChild(option);
+                                });
 
-                                // Save updated schedule back to localStorage
-                                localStorage.setItem('schedule', JSON.stringify(schedule));
-                                
-                                // Update the shift info to reflect the selected volunteer
-                                shiftInfo.innerHTML = `<strong>${role}</strong>: ${selectedVolunteer}`;
-                                
-                                // Hide the dropdown after selection
-                                selectElement.style.display = 'none';
+                                selectWrapper.appendChild(selectElement);
+                                cell.appendChild(shiftInfo);
+                                cell.appendChild(selectWrapper);
+
+                                // Show dropdown when the volunteer's name is clicked
+                                shiftInfo.addEventListener('click', () => {
+                                    selectElement.style.display = 'inline-block'; // Show dropdown
+                                    selectElement.focus();
+                                });
+
+                                // Update the displayed volunteer when a new one is selected
+                                selectElement.addEventListener('change', (e) => {
+                                    const selectedVolunteer = e.target.value;
+
+                                    // Update the displayed shift info
+                                    shiftInfo.innerHTML = `<strong>${shift.role}</strong>: ${selectedVolunteer}`;
+                                    
+                                    // Hide the dropdown
+                                    selectElement.style.display = 'none';
+                                });
                             });
                         });
                     }
                 });
             }
+
+
 
             // Load the schedule on page load
             document.addEventListener('DOMContentLoaded', loadSchedule);
