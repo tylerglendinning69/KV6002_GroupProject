@@ -99,84 +99,89 @@
             }
         
             function displayShifts() {
-                const schedule = JSON.parse(localStorage.getItem('schedule')) || [];
-                const volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
+                const shifts = JSON.parse(localStorage.getItem('shifts')) || [];
+                const volunteerData = JSON.parse(localStorage.getItem('volunteers')) || []; // Load volunteer data from localStorage
 
-                schedule.forEach(entry => {
-                    const { day, time, role, volunteer } = entry;
-                    const [startTime, endTime] = time.split('-');
+                if (volunteerData.length === 0) {
+                    console.warn("No volunteers found in localStorage.");
+                    return;
+                }
 
-                    const startHour = parseInt(startTime.split(':')[0], 10);
-                    const endHour = parseInt(endTime.split(':')[0], 10);
+                // Extract just the names of volunteers
+                const volunteers = volunteerData.map(vol => vol.name);
 
+                shifts.forEach(shift => {
+                    const { day, time, roles } = shift;
+                    const [startTime, endTime] = time.split('-'); // Split the time range into start and end
+
+                    const startHour = parseInt(startTime.split(':')[0], 10); // Extract the start hour
+                    const endHour = parseInt(endTime.split(':')[0], 10); // Extract the end hour
+
+                    // Loop through each hour in the range
                     for (let hour = startHour; hour < endHour; hour++) {
                         const currentTime = `${String(hour).padStart(2, '0')}:00-${String(hour + 1).padStart(2, '0')}:00`;
 
-                        // Select cells that match the day and time
+                        // Find all cells matching the shift's day and the current hour
                         const cells = Array.from(scheduleContainer.querySelectorAll('.schedule-cell')).filter(cell => {
                             return cell.dataset.day === day && cell.dataset.time === currentTime;
                         });
 
+                        // Update each matching cell with the shift information
                         cells.forEach(cell => {
-                            // Clear the cell before populating it
-                            cell.innerHTML = '';
+                            cell.style.color = "black";
+                            cell.style.textAlign = "center";
+                            cell.style.backgroundColor = "#1c1d21";
 
-                            // Find all shifts for this time and day
-                            const shifts = schedule.filter(s => s.day === day && s.time === currentTime);
+                            // Add roles with random volunteers assigned
+                            roles.forEach(role => {
+                                // Create a dropdown for selecting a volunteer
+                                const dropdown = document.createElement('select');
+                                dropdown.classList.add('volunteer-dropdown');
+                                dropdown.style.display = 'none'; // Initially hide the dropdown
 
-                            shifts.forEach(shift => {
-                                // Create a container for the shift info
-                                const shiftInfo = document.createElement('div');
-                                shiftInfo.classList.add('shift-info');
-                                shiftInfo.innerHTML = `<strong>${shift.role}</strong>: ${shift.volunteer || 'Unassigned'}`;
-
-                                // Add a dropdown for volunteer selection
-                                const selectWrapper = document.createElement('div');
-                                selectWrapper.classList.add('select-wrapper');
-                                const selectElement = document.createElement('select');
-                                selectElement.classList.add('volunteer-select');
-                                selectElement.style.display = 'none'; // Initially hidden
-
-                                // Default option
-                                const defaultOption = document.createElement('option');
-                                defaultOption.textContent = 'Select a volunteer';
-                                selectElement.appendChild(defaultOption);
-
-                                // Populate the dropdown with volunteers
-                                volunteers.forEach(vol => {
+                                // Add options for each volunteer
+                                volunteers.forEach(volunteer => {
                                     const option = document.createElement('option');
-                                    option.value = vol.name;
-                                    option.textContent = vol.name;
-                                    selectElement.appendChild(option);
+                                    option.value = volunteer;
+                                    option.textContent = volunteer;
+                                    dropdown.appendChild(option);
                                 });
 
-                                selectWrapper.appendChild(selectElement);
-                                cell.appendChild(shiftInfo);
-                                cell.appendChild(selectWrapper);
+                                // Randomly select a volunteer for this role
+                                const randomVolunteer = volunteers[Math.floor(Math.random() * volunteers.length)];
+
+                                // Create a div to display the volunteer name (as text initially)
+                                const volunteerDisplay = document.createElement('div');
+                                volunteerDisplay.classList.add('volunteer-display');
+                                volunteerDisplay.textContent = `${role}: ${randomVolunteer}`;
 
                                 // Show dropdown when the volunteer's name is clicked
-                                shiftInfo.addEventListener('click', () => {
-                                    selectElement.style.display = 'inline-block'; // Show dropdown
-                                    selectElement.focus();
+                                volunteerDisplay.addEventListener('click', () => {
+                                    dropdown.style.display = 'inline-block'; // Show dropdown
                                 });
 
-                                // Update the displayed volunteer when a new one is selected
-                                selectElement.addEventListener('change', (e) => {
-                                    const selectedVolunteer = e.target.value;
-
-                                    // Update the displayed shift info
-                                    shiftInfo.innerHTML = `<strong>${shift.role}</strong>: ${selectedVolunteer}`;
-                                    
-                                    // Hide the dropdown
-                                    selectElement.style.display = 'none';
+                                // Update the volunteer name when a new option is selected
+                                dropdown.addEventListener('change', (event) => {
+                                    const selectedVolunteer = event.target.value;
+                                    volunteerDisplay.textContent = `${role}: ${selectedVolunteer}`; // Update displayed volunteer name
+                                    dropdown.style.display = 'none'; // Hide the dropdown after selection
                                 });
+
+                                // Append the dropdown after the volunteer name
+                                cell.appendChild(volunteerDisplay);
+                                cell.appendChild(dropdown);
+
+                                // Ensure the volunteerDisplay and dropdown are not added multiple times
+                                const existingContent = cell.querySelector('.volunteer-display');
+                                if (!existingContent) {
+                                    // Add the volunteer name and dropdown
+                                    cell.innerHTML = `<div>${volunteerDisplay.outerHTML} ${dropdown.outerHTML}</div>`;
+                                }
                             });
                         });
                     }
                 });
             }
-
-
 
             // Load the schedule on page load
             document.addEventListener('DOMContentLoaded', loadSchedule);

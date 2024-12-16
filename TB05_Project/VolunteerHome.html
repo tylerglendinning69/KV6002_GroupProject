@@ -20,7 +20,7 @@
         </nav>
         <div class="button-container">
             <a href="VolunteerHome.html"><button name="CurrentWeekButton" type="button" class="extraBtns">Schedule</button></a>
-            <a href="VInputPreferences.html"><button name="NextWeekButton" type="button" class="extraBtns">Availability</button></a>
+            <a href="VInputPreferences.html"><button name="Availability" type="button" class="extraBtns">Availability</button></a>
         </div>
         <div class="button-container">
             <a href="VolunteerHome.html"><button name="CurrentWeekButton" type="button" class="extraBtns">Current Week</button></a>
@@ -103,45 +103,56 @@
             }
         
             function displayShifts() {
-                const schedule = JSON.parse(localStorage.getItem('schedule')) || [];
-                const volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
+                const shifts = JSON.parse(localStorage.getItem('shifts')) || [];
+                const volunteerData = JSON.parse(localStorage.getItem('volunteers')) || []; // Load volunteer data from localStorage
 
-                schedule.forEach(entry => {
-                    const { day, time, role, volunteer } = entry;
-                    const [startTime, endTime] = time.split('-');
+                if (volunteerData.length === 0) {
+                    console.warn("No volunteers found in localStorage.");
+                    return;
+                }
 
-                    const startHour = parseInt(startTime.split(':')[0], 10);
-                    const endHour = parseInt(endTime.split(':')[0], 10);
+                // Extract just the names of volunteers
+                const volunteers = volunteerData.map(vol => vol.name);
 
+                shifts.forEach(shift => {
+                    const { day, time, roles } = shift;
+                    const [startTime, endTime] = time.split('-'); // Split the time range into start and end
+
+                    const startHour = parseInt(startTime.split(':')[0], 10); // Extract the start hour
+                    const endHour = parseInt(endTime.split(':')[0], 10); // Extract the end hour
+
+                    // Loop through each hour in the range
                     for (let hour = startHour; hour < endHour; hour++) {
                         const currentTime = `${String(hour).padStart(2, '0')}:00-${String(hour + 1).padStart(2, '0')}:00`;
 
-                        // Select cells that match the day and time
+                        // Find all cells matching the shift's day and the current hour
                         const cells = Array.from(scheduleContainer.querySelectorAll('.schedule-cell')).filter(cell => {
                             return cell.dataset.day === day && cell.dataset.time === currentTime;
                         });
 
+                        // Update each matching cell with the shift information
                         cells.forEach(cell => {
-                            // Clear the cell before populating it
-                            cell.innerHTML = '';
+                            cell.style.color = "black";
+                            cell.style.textAlign = "center";
+                            cell.style.backgroundColor = "#1c1d21";
 
-                            // Find all shifts for this time and day
-                            const shifts = schedule.filter(s => s.day === day && s.time === currentTime);
+                            // Add roles with random volunteers assigned
+                            roles.forEach(role => {
+                                // Randomly select a volunteer for this role
+                                const randomVolunteer = volunteers[Math.floor(Math.random() * volunteers.length)];
 
-                            shifts.forEach(shift => {
-                                // Create a container for the shift info
-                                const shiftInfo = document.createElement('div');
-                                shiftInfo.classList.add('shift-info');
-                                shiftInfo.innerHTML = `<strong>${shift.role}</strong>: ${shift.volunteer || 'Unassigned'}`;
+                                // Create a div to display the volunteer name (as text, without the option to edit)
+                                const volunteerDisplay = document.createElement('div');
+                                volunteerDisplay.classList.add('volunteer-display');
+                                volunteerDisplay.textContent = `${role}: ${randomVolunteer}`;
 
-                                // Append the shift info to the cell
-                                cell.appendChild(shiftInfo);
+                                // Simply append the volunteer name without allowing any edits
+                                cell.appendChild(volunteerDisplay);
                             });
                         });
                     }
                 });
             }
-
 
             // Load the schedule on page load
             document.addEventListener('DOMContentLoaded', loadSchedule);
