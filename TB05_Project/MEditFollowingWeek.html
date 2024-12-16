@@ -9,7 +9,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Assigned Shifts</title>
 </head>
-<body>
+
+<body class="editBody">
+    <nav class="nav-bar">
+        <header>
+            <h2 class="logoHeading"><span class="heading1">VOLUNTEERING</span> SOLUTIONS</h2>
+        </header>
+        <div class="logout-container">
+            <a href="Login.html"><button  class="extraBtns">LOG OUT</button></a>
+        </div>
+    </nav>
     <header>
         <h1>Edit Assigned Shifts</h1>
     </header>
@@ -18,47 +27,96 @@
     <div id="editSchedule"></div>
 
     <!-- Save and Back buttons -->
-    <button id="saveChanges" class="extraBtns">Save Changes</button>
-    <a href="MFollowingWeek.html"><button class="extraBtns">Back to Schedule</button></a>
+    <div class="button-container editBtns">
+        <button id="saveChanges" class="extraBtns btnMargin" style="width: fit-content;">Save Changes</button>
+        <a href="MFollowingWeek.html"><button class="extraBtns btnMargin">Back to Schedule</button></a>
+    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const scheduleContainer = document.getElementById('editSchedule');
-            const assignedShifts = JSON.parse(localStorage.getItem('assignedShifts')) || [];
-            const volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
+    document.addEventListener('DOMContentLoaded', () => {
+    const scheduleContainer = document.getElementById('editSchedule');
+    const assignedShifts = JSON.parse(localStorage.getItem('assignedShifts')) || [];
+    const volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
 
-            // Extract volunteer names for the dropdown
-            const volunteerNames = volunteers.map(v => v.name);
+    // Extract volunteer names for dropdown
+    const volunteerNames = volunteers.map(v => v.name);
 
-            // Display editable schedule
-            scheduleContainer.innerHTML = '<h3>Edit Volunteers for Shifts</h3>';
-            assignedShifts.forEach((shift, index) => {
-                const shiftDiv = document.createElement('div');
-                shiftDiv.innerHTML = `
-                    <p><strong>Day:</strong> ${shift.day} <strong>Time:</strong> ${shift.time} <strong>Role:</strong> ${shift.role}</p>
-                    <label for="volunteer-${index}">Assigned Volunteer:</label>
-                    <select id="volunteer-${index}" data-index="${index}">
-                        <option value="Unassigned">Unassigned</option>
-                        ${volunteerNames.map(name => `
-                            <option value="${name}" ${shift.volunteer === name ? 'selected' : ''}>${name}</option>
-                        `).join('')}
-                    </select>
-                `;
-                scheduleContainer.appendChild(shiftDiv);
-            });
+    // Order of days for sorting
+    const dayOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-            // Save changes to localStorage
-            document.getElementById('saveChanges').addEventListener('click', () => {
-                const updatedShifts = assignedShifts.map((shift, index) => {
-                    const select = document.querySelector(`#volunteer-${index}`);
-                    shift.volunteer = select.value;
-                    return shift;
-                });
+    // Group shifts by day
+    const groupedShifts = assignedShifts.reduce((groups, shift) => {
+        if (!groups[shift.day]) {
+            groups[shift.day] = [];
+        }
+        groups[shift.day].push(shift);
+        return groups;
+    }, {});
 
-                localStorage.setItem('assignedShifts', JSON.stringify(updatedShifts));
-                alert('Schedule updated successfully!');
+    // Sort grouped shifts based on day order
+    const sortedDays = Object.keys(groupedShifts).sort((a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b));
+
+    // Render grouped shifts
+    scheduleContainer.innerHTML = ``;
+
+    // Flexbox container for side-by-side display
+    const flexContainer = document.createElement('div');
+    flexContainer.classList.add('flexContainer');
+
+    // Generate tables for each day
+    sortedDays.forEach(day => {
+        const daySection = document.createElement('div');
+        daySection.classList.add('daySection'); // Added class for easier styling
+        daySection.innerHTML = `
+            <h2 style="color: #8a2be2; text-align: center;">${day}</h2>
+            <table style="width: 100%; border-collapse: collapse; color: white;" class="editTable">
+                <thead>
+                    <tr class="editTr">
+                        <th style="border: 1px solid #444; padding: 5px;" class="editHeader">Time</th>
+                        <th style="border: 1px solid #444; padding: 5px;" class="editHeader">Role</th>
+                        <th style="border: 1px solid #444; padding: 5px;" class="editHeader">Volunteer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${groupedShifts[day].map((shift, index) => `
+                        <tr class="editTr">
+                            <td style="border: 1px solid #444; padding: 5px; text-align: center;" class="editStuff">${shift.time}</td>
+                            <td style="border: 1px solid #444; padding: 5px; text-align: center;" class="editStuff">${shift.role}</td>
+                            <td style="border: 1px solid #444; padding: 5px; text-align: center;" class="editStuff">
+                                <select id="volunteer-${day}-${index}" data-day="${day}" data-index="${index}">
+                                    <option value="Unassigned">Unassigned</option>
+                                    ${volunteerNames.map(name => `
+                                        <option value="${name}" ${shift.volunteer === name ? 'selected' : ''}>${name}</option>
+                                    `).join('')}
+                                </select>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+        flexContainer.appendChild(daySection);
+    });
+
+    scheduleContainer.appendChild(flexContainer);
+
+    // Save changes to localStorage
+    document.getElementById('saveChanges').addEventListener('click', () => {
+        const updatedShifts = [];
+
+        sortedDays.forEach(day => {
+            groupedShifts[day].forEach((shift, index) => {
+                const select = document.querySelector(`#volunteer-${day}-${index}`);
+                shift.volunteer = select.value;
+                updatedShifts.push(shift);
             });
         });
+
+        localStorage.setItem('assignedShifts', JSON.stringify(updatedShifts));
+        alert('Schedule updated successfully!');
+    });
+});
+
     </script>
 </body>
 </html>
